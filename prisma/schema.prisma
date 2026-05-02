@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id         String     @id @default(uuid())
+  firstName  String     @map("first_name")
+  lastName   String     @map("last_name")
+  email      String     @unique
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+  activities Activity[]
+  categories Category[]
+
+  @@map("users")
+}
+
+model Activity {
+  id           String         @id @default(uuid())
+  label        String
+  userId       String         @map("user_id")
+  owner        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  activityTags ActivityTags[]
+  activityLogs ActivityLog[]
+
+  @@unique([userId, label])
+  @@map("activities")
+}
+
+model Category {
+  id           String         @id @default(uuid())
+  label        String
+  userId       String         @map("user_id")
+  owner        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  color        String?
+  icon         String?
+  description  String?
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  activityTags ActivityTags[]
+
+  @@unique([userId, label])
+  @@map("categories")
+}
+
+model ActivityTags {
+  id         String   @id @default(uuid())
+  activityId String   @map("activity_id")
+  categoryId String   @map("category_id")
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([activityId, categoryId])
+  @@map("activity_tags")
+}
+
+model ActivityLog {
+  id          String       @id @default(uuid())
+  activityId  String       @map("activity_id")
+  month       Int
+  year        Int
+  target      Int
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  activity    Activity     @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  successLogs SuccessLog[]
+
+  @@unique([activityId, month, year])
+  @@map("activity_logs")
+}
+
+model SuccessLog {
+  id            String      @id @default(uuid())
+  date          DateTime
+  activityLogId String      @map("activity_log_id")
+  activityLog   ActivityLog @relation(fields: [activityLogId], references: [id], onDelete: Cascade)
+
+  @@unique([activityLogId, date])
+  @@map("success_logs")
+}
