@@ -15,8 +15,7 @@ async function main() {
         update: {},
         create: {
             email: "jovan@wdidtm.com",
-            firstName: "Jovan",
-            lastName: "Medford",
+            name: "Jovan Medford"
         },
     });
 
@@ -25,8 +24,7 @@ async function main() {
         update: {},
         create: {
             email: "khadijah@wdidtm.com",
-            firstName: "Khadijah",
-            lastName: "Medford",
+            name: "Khadijah Medford"
         },
     });
 
@@ -35,8 +33,7 @@ async function main() {
         update: {},
         create: {
             email: "alex@wdidtm.com",
-            firstName: "Alex",
-            lastName: "Rivera",
+            name: "Alex Rivera",
         },
     });
 
