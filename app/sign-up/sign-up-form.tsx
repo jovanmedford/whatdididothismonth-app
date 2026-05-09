@@ -1,6 +1,7 @@
 "use client";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "@/app/_components/toast/store";
+import { ComponentProps, SubmitEvent } from "react";
 
 
 export default function SignUpForm() {
@@ -25,7 +26,57 @@ export default function SignUpForm() {
         }
     }
 
-    return (<section>
-        <button onClick={handleGithubSignIn} className="bg-gray-800 text-white px-4 py-2 rounded">Github</button>
-    </section>)
+    const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        // Handle form submission logic here
+        console.log("Form submitted.");
+    };
+
+    return (
+        <div>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6 mb-8">
+                <Input label="Email" type="email" id="email" required placeholder="Email" />
+                <Input label="Password" type="password" id="password" required placeholder="Password" />
+                <Button type="submit">Sign Up</Button>
+            </form>
+            <Divider />
+            <Button onClick={handleGithubSignIn}>
+                Github
+            </Button>
+        </div>
+    )
+}
+
+type InputProps = ComponentProps<"input"> & {
+    label: string
+}
+
+type ButtonProps = ComponentProps<"button">
+
+function Input({ label, className, ...rest }: InputProps) {
+    return (
+        <div>
+            <label className="block" htmlFor={rest.id}>
+                {label}
+            </label>
+            <input className={`w-full border p-1 ${className || ''}`} {...rest} />
+        </div>
+    );
+}
+
+function Button({ className, children, ...rest }: ButtonProps) {
+    return (
+        <button className={`border px-4 py-1 rounded hover:cursor-pointer ${className || ''}`} {...rest} >
+            {children}
+        </button>
+    );
+}
+
+function Divider() {
+    return (<div className="flex items-center my-4 text-center mb-8">
+        <hr className="flex-grow border-t" />
+        <span className="mx-2 text-sm">or sign in with</span>
+        <hr className="flex-grow border-t" />
+    </div>
+    )
 }
