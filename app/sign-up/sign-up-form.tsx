@@ -1,6 +1,6 @@
 "use client";
 import { authClient } from "@/lib/auth-client";
-import { toast } from "../_components/toast/store";
+import { toast } from "@/app/_components/toast/store";
 
 
 export default function SignUpForm() {
