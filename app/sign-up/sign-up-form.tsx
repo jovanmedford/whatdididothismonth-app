@@ -34,14 +34,15 @@ export default function SignUpForm() {
 
     return (
         <div>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6 mb-8">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4 mb-4">
+                <Input label="Name" type="text" id="name" required placeholder="John Smith" />
                 <Input label="Email" type="email" id="email" required placeholder="Email" />
                 <Input label="Password" type="password" id="password" required placeholder="Password" />
-                <Button type="submit">Sign Up</Button>
+                <Button type="submit" className="my-2">Sign Up</Button>
             </form>
             <Divider />
             <Button onClick={handleGithubSignIn}>
-                Github
+                GitHub
             </Button>
         </div>
     )
@@ -73,7 +74,7 @@ function Button({ className, children, ...rest }: ButtonProps) {
 }
 
 function Divider() {
-    return (<div className="flex items-center my-4 text-center mb-8">
+    return (<div className="flex items-center mt-4 text-center mb-2">
         <hr className="flex-grow border-t" />
         <span className="mx-2 text-sm">or sign in with</span>
         <hr className="flex-grow border-t" />
