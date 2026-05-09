@@ -1,30 +1,27 @@
 "use client";
 import { authClient } from "@/lib/auth-client";
+import { toast } from "../_components/toast/store";
 
 
 export default function SignUpForm() {
 
     const handleGithubSignIn = async () => {
         try {
-            await authClient.signIn.social({
-                /**
-                 * The social provider ID
-                 * @example "github", "google", "apple"
-                 */
+            const response = await authClient.signIn.social({
                 provider: "github",
-                /**
-                 * A URL to redirect after the user authenticates with the provider
-                 * @default "/"
-                 */
                 callbackURL: "/calendar",
-                /**
-                 * A URL to redirect if an error occurs during the sign in process
-                 */
                 errorCallbackURL: "/error",
             });
 
+            if (response.error) {
+                console.log("[auth] Error during GitHub sign-in:", response.error);
+                toast.error(`GitHub sign-in failed. | Please try again.`);
+                return;
+            }
+
         } catch (error) {
-            console.error("Error during GitHub sign-in:", error);
+            toast.error("An error occurred during GitHub sign-in. Please try again.");
+            console.log("[auth] Error during GitHub sign-in:", { error });
         }
     }
 
