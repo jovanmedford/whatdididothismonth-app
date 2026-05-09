@@ -2,6 +2,7 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { AppPageLayout } from "../_components/app-page-layout";
 
 export default async function CalendarPage() {
     const session = await auth.api.getSession({
@@ -12,9 +13,8 @@ export default async function CalendarPage() {
     }
 
     return (
-        <div>
-            <h1>Calendar Page</h1>
-            <p>This is the calendar page.</p>
-        </div>
+        <AppPageLayout>
+            <h1 className="text-center text-2xl font-bold">Calendar</h1>
+        </AppPageLayout>
     );
 }
