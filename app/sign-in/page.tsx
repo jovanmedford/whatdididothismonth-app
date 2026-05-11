@@ -3,12 +3,15 @@ import { AuthPageLayout } from "../_components/auth-page-layout";
 import { Plant } from "../_components/plant";
 import SignInForm from "./sign-in-form";
 import { Metadata } from "next";
+import { redirectIfAuthenticated } from "@/lib/dal";
 
 export const metadata: Metadata = {
     title: "Sign In",
 }
 
-export default function SignInPage() {
+export default async function SignInPage() {
+    await redirectIfAuthenticated();
+
     return (
         <AuthPageLayout
             left={<Plant className="absolute  top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" width={140} height={280} />}
