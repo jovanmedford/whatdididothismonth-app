@@ -13,6 +13,7 @@ export default function SignInForm() {
     async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
+        setLoading(true)
 
         try {
             const { error } = await authClient.signIn.email({

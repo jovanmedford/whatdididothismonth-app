@@ -12,9 +12,10 @@ export default function LogoutButton() {
             if (error) {
                 toast.error("Failed to log out. Please try again.");
                 console.error("Error signing out:", error);
+                return
             }
 
-            router.push("/");
+            router.push("/sign-in");
         } catch (error) {
             console.error("Error signing out:", error);
             toast.error("Failed to log out. Please try again.");
