@@ -1,10 +1,10 @@
 import { Logo } from "../logo";
 import Link from "next/link";
 import LogoutButton from "./logout-button";
-import { verifySession } from "@/lib/dal";
+import { verifySession } from "@/app/_data/auth";
 
 export async function AppHeader() {
-    const { user } = await verifySession();
+    const user = await verifySession();
     return (
         <header className="flex justify-between items-center mb-10">
             <Link href="/calendar">

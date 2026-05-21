@@ -3,7 +3,7 @@ import SignUpForm from "./sign-up-form";
 import { Plant } from "../_components/plant";
 import Link from "next/link";
 import { AuthPageLayout } from "../_components/auth-page-layout";
-import { redirectIfAuthenticated } from "@/lib/dal";
+import { redirectIfAuthenticated } from "@/app/_data/auth";
 
 export const metadata: Metadata = {
     title: "Sign Up",

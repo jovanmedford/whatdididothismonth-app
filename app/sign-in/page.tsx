@@ -3,7 +3,7 @@ import { AuthPageLayout } from "../_components/auth-page-layout";
 import { Plant } from "../_components/plant";
 import SignInForm from "./sign-in-form";
 import { Metadata } from "next";
-import { redirectIfAuthenticated } from "@/lib/dal";
+import { redirectIfAuthenticated } from "@/app/_data/auth";
 
 export const metadata: Metadata = {
     title: "Sign In",

@@ -1,9 +1,10 @@
 import 'server-only'
 
-import { auth } from "./auth"
+import { auth } from "../../lib/auth"
 import { cache } from 'react'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { getUserFromSession } from './dtos'
 
 export const verifySession = cache(async () => {
     const session = await auth.api.getSession({
@@ -14,7 +15,7 @@ export const verifySession = cache(async () => {
         redirect('/sign-in')
     }
 
-    return session
+    return getUserFromSession(session)
 })
 
 export const redirectIfAuthenticated = cache(async (to: string = '/calendar') => {
