@@ -38,11 +38,13 @@ function MonthSelect({ onChange, value }: { onChange: (event: ChangeEvent<HTMLSe
 }
 
 function MonthRadioGroup({ onChange, value }: { onChange: (event: ChangeEvent<HTMLInputElement>) => void; value: number }) {
+    const isChecked = (monthValue: number) => monthValue === value;
     return (
-        <div className="hidden md:flex  justify-between w-full">
+        <div className="hidden md:flex  justify-between w-full py-2 border-t border-b">
             {MONTHS.map((month) => (
-                <label className="block" key={month.value}>
-                    <input type="radio" name="month" value={month.value} onChange={onChange} checked={month.value === value} />
+                <label className={`${isChecked(month.value) ? " bg-primary-400 text-white" : ""
+                    } block rounded-3xl px-3 py-1 focus:outline-2 radio-parent`} key={month.value}>
+                    <input className="sr-only" type="radio" name="month" value={month.value} onChange={onChange} checked={isChecked(month.value)} />
                     {month.name.slice(0, 3)}
                 </label>
             ))}
