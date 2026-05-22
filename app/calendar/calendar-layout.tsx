@@ -1,4 +1,6 @@
+import CalendarTable from "./calendar-table";
 import { ActivityLogDto } from "../_data/dtos"
+
 
 /**
  * Renders the appropriate layout by screen width. Handles empty.
@@ -15,12 +17,8 @@ export const CalendarLayout = ({ logs }: { logs: ActivityLogDto[] }) => {
 
     return (
         <div>
-            {logs.map(log => (
-                <div key={log.id} className="border p-4 rounded mb-4">
-                    <h2 className="text-lg font-semibold">{log.activityLabel}</h2>
-                    <p>Success Logs: {log.successes.join(", ")}</p>
-                </div>
-            ))}
+            <CalendarTable logs={logs} />
         </div>
     )
 }
+
