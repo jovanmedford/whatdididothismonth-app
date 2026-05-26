@@ -7,6 +7,8 @@ import { getActivityLogs } from "../_data/activity-log";
 import { CalendarLayout } from "./calendar-layout";
 import YearSelector from "./year-selector";
 import MonthSelector from "./month-selector";
+import CalendarTable from "./calendar-table";
+import CalendarStack from "./calendar-stack";
 
 export default async function CalendarPage({
     searchParams,
@@ -32,6 +34,8 @@ export default async function CalendarPage({
     }
 
     const result = await getActivityLogs({ year, month })
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
 
     return (
@@ -43,7 +47,11 @@ export default async function CalendarPage({
 
 
             {result.ok ? (
-                <CalendarLayout logs={result.data} />
+                result.data.length > 0 ? (
+                    <CalendarLayout table={<CalendarTable logs={result.data} days={daysArray} />} stack={<CalendarStack logs={result.data} days={daysArray} />} />
+                ) : (
+                    <p className="text-center">Add activity logs to see them here.</p>
+                )
             ) : (
                 <p className="text-center text-error">Failed to load activity logs.</p>
             )}

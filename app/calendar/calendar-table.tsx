@@ -1,10 +1,7 @@
-import { ActivityLogDto } from "../_data/dtos"
 import Square from "../_components/square/square"
+import { CalendarViewProps } from "@/lib/types"
 
-export default function CalendarTable({ logs }: { logs: ActivityLogDto[] }) {
-    const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate()
-    const days = Array.from({ length: daysInMonth }, (_, i) => i + 1)
-
+export default function CalendarTable({ logs, days }: CalendarViewProps) {
     return (
         <table className="w-full">
             <tbody>
@@ -12,10 +9,10 @@ export default function CalendarTable({ logs }: { logs: ActivityLogDto[] }) {
                     <tr key={log.id} className="border-b">
                         <td className="p-4 border-r">
                             {log.activityLabel}
-                            <span className="block">{log.successes.length} / {daysInMonth}</span>
+                            <span className="block">{log.successes.length} / {log.target}</span>
                         </td>
                         <td className="grid grid-cols-16 gap-4 p-4">
-                            {days.map((day) => <Square key={day} isChecked={log.successes.includes(day)} />)}
+                            {days.map((day) => <Square className="size-8" key={day} isChecked={log.successes.includes(day)} />)}
                         </td>
                     </tr>
                 ))}

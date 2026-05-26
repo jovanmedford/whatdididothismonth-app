@@ -1,18 +1,21 @@
 "use client";
 
+import { clsx } from "@/lib/util";
+
 /**
  * 
  * WDIDTM Activity Square
  */
-export default function Square({ isChecked = false, onChange = () => console.log("CLICKED") }: SquareProps) {
+export default function Square({ className, isChecked = false, onChange = () => console.log("CLICKED") }: SquareProps) {
     return (
-        <label className={`${isChecked ? "bg-primary-400" : "bg-gray-300"} block w-7 h-7 lg:w-8 lg:h-8 rounded-sm focus:outline-2 checkbox-parent`}>
-            <input className="sr-only" type="checkbox" checked={isChecked} onChange={onChange} readOnly={!!onChange}/>
+        <label className={`block focus:outline-2 checkbox-parent size-7 ${clsx(className, isChecked ? "bg-primary-400" : "bg-gray-300")}`}>
+            <input className="sr-only" type="checkbox" checked={isChecked} onChange={onChange} readOnly={!!onChange} />
         </label>
     )
 }
 
 interface SquareProps {
+    className?: string
     isChecked?: boolean
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }

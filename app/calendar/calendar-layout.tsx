@@ -1,24 +1,17 @@
-import CalendarTable from "./calendar-table";
-import { ActivityLogDto } from "../_data/dtos"
+"use client"
+import { useIsMobile } from "../_hooks/useIsMobile";
 
 
 /**
  * Renders the appropriate layout by screen width. Handles empty.
  */
-export const CalendarLayout = ({ logs }: { logs: ActivityLogDto[] }) => {
+export const CalendarLayout = ({ table, stack }: { table: React.ReactNode, stack: React.ReactNode }) => {
+    const isMobile = useIsMobile();
 
-    if (logs.length === 0) {
-        return (
-            <div className="text-center text-gray-500">
-                <p>Add a new log to start tracking!</p>
-            </div>
-        )
+    if (isMobile === undefined) {
+        return null;
     }
 
-    return (
-        <div>
-            <CalendarTable logs={logs} />
-        </div>
-    )
+    return isMobile ? stack : table
 }
 
