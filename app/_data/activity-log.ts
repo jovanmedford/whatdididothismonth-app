@@ -36,7 +36,7 @@ export const getActivityLogs = async ({ year, month }: { year: number, month: nu
             month: log.month,
             year: log.year,
             target: log.target,
-            successes: log.successLogs.map(successLog => successLog.date.getDate())
+            successes: log.successLogs.map(successLog => successLog.day)
         })))
     } catch (error) {
         return internalError("Failed to fetch activity logs")

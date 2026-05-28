@@ -61,7 +61,7 @@ CREATE TABLE "activity_logs" (
 -- CreateTable
 CREATE TABLE "success_logs" (
     "id" TEXT NOT NULL,
-    "date" TIMESTAMP(3) NOT NULL,
+    "day" INTEGER NOT NULL,
     "activity_log_id" TEXT NOT NULL,
 
     CONSTRAINT "success_logs_pkey" PRIMARY KEY ("id")
@@ -128,7 +128,7 @@ CREATE UNIQUE INDEX "activity_tags_activity_id_category_id_key" ON "activity_tag
 CREATE UNIQUE INDEX "activity_logs_activity_id_month_year_key" ON "activity_logs"("activity_id", "month", "year");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "success_logs_activity_log_id_date_key" ON "success_logs"("activity_log_id", "date");
+CREATE UNIQUE INDEX "success_logs_activity_log_id_day_key" ON "success_logs"("activity_log_id", "day");
 
 -- CreateIndex
 CREATE INDEX "session_userId_idx" ON "session"("userId");

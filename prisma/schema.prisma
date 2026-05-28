@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -83,11 +82,11 @@ model ActivityLog {
 
 model SuccessLog {
   id            String      @id @default(uuid())
-  date          DateTime
+  day           Int
   activityLogId String      @map("activity_log_id")
   activityLog   ActivityLog @relation(fields: [activityLogId], references: [id], onDelete: Cascade)
 
-  @@unique([activityLogId, date])
+  @@unique([activityLogId, day])
   @@map("success_logs")
 }
 

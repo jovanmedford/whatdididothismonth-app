@@ -229,9 +229,6 @@ async function main() {
     );
 
     // ── SuccessLogs ────────────────────────────────────────────────────────
-    // Helper to generate dates for specific days in May 2026
-    const mayDate = (day: number) => new Date(2026, 4, day);
-
     // Jovan — gym and running on alternating days, studying more consistently
     const jovanSuccesses: { logIndex: number; days: number[] }[] = [
         { logIndex: 0, days: [1, 3, 5, 7, 9, 12, 14, 16, 19, 21, 23, 26, 28, 30] }, // gym
@@ -243,9 +240,9 @@ async function main() {
     for (const { logIndex, days } of jovanSuccesses) {
         for (const day of days) {
             await prisma.successLog.upsert({
-                where: { activityLogId_date: { activityLogId: jovanLogs[logIndex].id, date: mayDate(day) } },
+                where: { activityLogId_day: { activityLogId: jovanLogs[logIndex].id, day } },
                 update: {},
-                create: { activityLogId: jovanLogs[logIndex].id, date: mayDate(day) },
+                create: { activityLogId: jovanLogs[logIndex].id, day },
             });
         }
     }
@@ -260,9 +257,9 @@ async function main() {
     for (const { logIndex, days } of khadiahSuccesses) {
         for (const day of days) {
             await prisma.successLog.upsert({
-                where: { activityLogId_date: { activityLogId: khadiahLogs[logIndex].id, date: mayDate(day) } },
+                where: { activityLogId_day: { activityLogId: khadiahLogs[logIndex].id, day } },
                 update: {},
-                create: { activityLogId: khadiahLogs[logIndex].id, date: mayDate(day) },
+                create: { activityLogId: khadiahLogs[logIndex].id, day },
             });
         }
     }
@@ -276,9 +273,9 @@ async function main() {
     for (const { logIndex, days } of alexSuccesses) {
         for (const day of days) {
             await prisma.successLog.upsert({
-                where: { activityLogId_date: { activityLogId: alexLogs[logIndex].id, date: mayDate(day) } },
+                where: { activityLogId_day: { activityLogId: alexLogs[logIndex].id, day } },
                 update: {},
-                create: { activityLogId: alexLogs[logIndex].id, date: mayDate(day) },
+                create: { activityLogId: alexLogs[logIndex].id, day },
             });
         }
     }
