@@ -16,7 +16,7 @@ const error = (code: ErrorCode, status: number, message: string) => {
             code,
             status,
             message,
-        } 
+        }
     } as const
 }
 
@@ -28,7 +28,7 @@ export const badRequestError = (message: string) => {
     return error("BAD_REQUEST", 400, message)
 }
 
-export const unauthorizedError = (message: string) => {
+export const unauthorizedError = (message: string = "User is not authorized.") => {
     return error("UNAUTHORIZED", 401, message)
 }
 
