@@ -37,7 +37,6 @@ export default async function CalendarPage({
     const daysInMonth = new Date(year, month, 0).getDate();
     const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
-
     return (
         <AppPageLayout>
             <h1 className="text-center text-2xl font-bold">Calendar</h1>
@@ -48,7 +47,9 @@ export default async function CalendarPage({
 
             {result.ok ? (
                 result.data.length > 0 ? (
-                    <CalendarLayout table={<CalendarTable logs={result.data} days={daysArray} />} stack={<CalendarStack logs={result.data} days={daysArray} />} />
+                    <CalendarLayout
+                        table={<CalendarTable logs={result.data} days={daysArray} />}
+                        stack={<CalendarStack logs={result.data} days={daysArray} />} />
                 ) : (
                     <p className="text-center">Add activity logs to see them here.</p>
                 )

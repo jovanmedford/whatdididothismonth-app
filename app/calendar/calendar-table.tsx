@@ -1,5 +1,6 @@
-import Square from "../_components/square/square"
 import { CalendarViewProps } from "@/lib/types"
+import { SuccessSquare } from "../_components/success-square"
+
 
 export default function CalendarTable({ logs, days }: CalendarViewProps) {
     return (
@@ -12,7 +13,7 @@ export default function CalendarTable({ logs, days }: CalendarViewProps) {
                             <span className="block">{log.successes.length} / {log.target}</span>
                         </td>
                         <td className="grid grid-cols-16 gap-4 p-4">
-                            {days.map((day) => <Square className="size-8" key={day} isChecked={log.successes.includes(day)} />)}
+                            {days.map((day) => <SuccessSquare key={day} activityLogId={log.id} day={day} initialChecked={log.successes.includes(day)} />)}
                         </td>
                     </tr>
                 ))}
