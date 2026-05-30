@@ -23,7 +23,7 @@ export const getActivityLogs = async ({ year, month }: { year: number, month: nu
         const logs = await prisma.activityLog.findMany({
             where: {
                 activity: {
-                    owner: { email: "jovan@wdidtm.com" }
+                    owner: { id: user.id }
                 },
                 month,
                 year,
