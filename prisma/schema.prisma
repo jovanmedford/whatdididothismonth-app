@@ -25,16 +25,17 @@ model User {
 }
 
 model Activity {
-  id           String         @id @default(uuid())
-  label        String
-  userId       String         @map("user_id")
-  owner        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt    DateTime       @default(now()) @map("created_at")
-  updatedAt    DateTime       @updatedAt @map("updated_at")
-  activityTags ActivityTags[]
-  activityLogs ActivityLog[]
+  id              String         @id @default(uuid())
+  label           String
+  normalizedLabel String         @default(dbgenerated("''")) @map("normalized_label")
+  userId          String         @map("user_id")
+  owner           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  activityTags    ActivityTags[]
+  activityLogs    ActivityLog[]
 
-  @@unique([userId, label])
+  @@unique([userId, normalizedLabel])
   @@map("activities")
 }
 

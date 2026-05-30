@@ -2,6 +2,7 @@ import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma/client";
 import { Activity, ActivityLog, ActivityTags, Category } from "@/generated/prisma/client";
+import { normalizeLabel } from "@/lib/util";
 
 
 const connectionString = `${process.env.DATABASE_URL}`;
@@ -85,22 +86,22 @@ async function main() {
     // ── Activities ─────────────────────────────────────────────────────────
     const jovanActivities = await Promise.all<Activity>([
         prisma.activity.upsert({
-            where: { userId_label: { userId: jovan.id, label: "Go to the gym" } },
+            where: { userId_normalizedLabel: { userId: jovan.id, normalizedLabel: normalizeLabel("Go to the gym") } },
             update: {},
             create: { userId: jovan.id, label: "Go to the gym" },
         }),
         prisma.activity.upsert({
-            where: { userId_label: { userId: jovan.id, label: "Run 5k" } },
+            where: { userId_normalizedLabel: { userId: jovan.id, normalizedLabel: normalizeLabel("Run 5k") } },
             update: {},
             create: { userId: jovan.id, label: "Run 5k" },
         }),
         prisma.activity.upsert({
-            where: { userId_label: { userId: jovan.id, label: "Study algorithms" } },
+            where: { userId_normalizedLabel: { userId: jovan.id, normalizedLabel: normalizeLabel("Study algorithms") } },
             update: {},
             create: { userId: jovan.id, label: "Study algorithms" },
         }),
         prisma.activity.upsert({
-            where: { userId_label: { userId: jovan.id, label: "Read engineering blogs" } },
+            where: { userId_normalizedLabel: { userId: jovan.id, normalizedLabel: normalizeLabel("Read engineering blogs") } },
             update: {},
             create: { userId: jovan.id, label: "Read engineering blogs" },
         }),
@@ -108,17 +109,17 @@ async function main() {
 
     const khadiahActivities = await Promise.all<Activity>([
         prisma.activity.upsert({
-            where: { userId_label: { userId: khadijah.id, label: "Morning yoga" } },
+            where: { userId_normalizedLabel: { userId: khadijah.id, normalizedLabel: normalizeLabel("Morning yoga") } },
             update: {},
             create: { userId: khadijah.id, label: "Morning yoga" },
         }),
         prisma.activity.upsert({
-            where: { userId_label: { userId: khadijah.id, label: "Journaling" } },
+            where: { userId_normalizedLabel: { userId: khadijah.id, normalizedLabel: normalizeLabel("Journaling") } },
             update: {},
             create: { userId: khadijah.id, label: "Journaling" },
         }),
         prisma.activity.upsert({
-            where: { userId_label: { userId: khadijah.id, label: "Sketch for 20 mins" } },
+            where: { userId_normalizedLabel: { userId: khadijah.id, normalizedLabel: normalizeLabel("Sketch for 20 mins") } },
             update: {},
             create: { userId: khadijah.id, label: "Sketch for 20 mins" },
         }),
@@ -126,12 +127,12 @@ async function main() {
 
     const alexActivities = await Promise.all<Activity>([
         prisma.activity.upsert({
-            where: { userId_label: { userId: alex.id, label: "Evening run" } },
+            where: { userId_normalizedLabel: { userId: alex.id, normalizedLabel: normalizeLabel("Evening run") } },
             update: {},
             create: { userId: alex.id, label: "Evening run" },
         }),
         prisma.activity.upsert({
-            where: { userId_label: { userId: alex.id, label: "Meditate" } },
+            where: { userId_normalizedLabel: { userId: alex.id, normalizedLabel: normalizeLabel("Meditate") } },
             update: {},
             create: { userId: alex.id, label: "Meditate" },
         }),
