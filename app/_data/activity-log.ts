@@ -1,3 +1,4 @@
+"use server"
 import { verifySession } from "./auth"
 import { prisma } from "@/lib/db";
 import { ActivityLogDto, UserDto } from "./dtos";
@@ -79,6 +80,7 @@ export const createActivityLogByLabel = async ({ label, month, year, target, ses
                 update: {}
             })
 
+
             return await tx.activityLog.create({
                 data: {
                     month,
@@ -89,6 +91,7 @@ export const createActivityLogByLabel = async ({ label, month, year, target, ses
             })
         })
 
+        revalidateFn("/calendar")
         return success({
             id: activityLog.id,
             activityLabel: label,
@@ -142,6 +145,7 @@ export const createActivityLogById = async ({ activityId, month, year, target, s
             }
         })
 
+        revalidateFn("/calendar")
         return success({
             id: activityLog.id,
             activityLabel: activityLog.activity.label,

@@ -27,7 +27,7 @@ export async function addSuccess({ day, activityLogId, sessionAuth = verifySessi
             where: {
                 activity: {
                     owner: {
-                        email: "jovan@wdidtm.com",
+                        id: user.id,
                     }
                 },
                 id: activityLogId,
@@ -83,7 +83,7 @@ export async function deleteSuccess({ day, activityLogId, sessionAuth = verifySe
             where: {
                 activity: {
                     owner: {
-                        email: "jovan@wdidtm.com",
+                        id: user.id,
                     }
                 },
                 id: activityLogId,
