@@ -1,0 +1,1 @@
+export const MAX_ACTIVITY_LABEL_LENGTH = 100;

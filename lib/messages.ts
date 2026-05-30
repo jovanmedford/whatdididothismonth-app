@@ -1,0 +1,1 @@
+export const LOG_ALREADY_EXISTS_MESSAGE = "Looks like you're already tracking this activity for this month and year."
