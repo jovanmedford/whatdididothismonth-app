@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { Josefin_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "./_components/toast/toaster";
+import { cn } from "@/lib/utils";
 
 const josefinSans = Josefin_Sans({
-  variable: "--font-josefin-sans",
+  variable: "--font-sans",
   subsets: ["latin"],
 });
 
@@ -24,7 +25,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${josefinSans.variable} h-full antialiased`}
+      className={cn("h-full", "antialiased", josefinSans.variable, "font-sans")}
     >
       <body className="min-h-full flex flex-col">
         {children}
