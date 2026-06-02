@@ -9,6 +9,7 @@ import YearSelector from "./year-selector";
 import MonthSelector from "./month-selector";
 import CalendarTable from "./calendar-table";
 import CalendarStack from "./calendar-stack";
+import { CreateActivityLogButton } from "../_components/create-activity-log-button";
 
 export default async function CalendarPage({
     searchParams,
@@ -39,11 +40,14 @@ export default async function CalendarPage({
 
     return (
         <AppPageLayout>
-            <h1 className="text-center text-2xl font-bold">Calendar</h1>
+            <h1 className="text-center text-2xl font-bold mb-0">Calendar</h1>
 
-            <YearSelector searchYear={year} />
+            <div className="flex justify-between w-full mb-4 items-end">
+                <YearSelector searchYear={year} />
+                <CreateActivityLogButton year={year} month={month}/>
+            </div>
+
             <MonthSelector searchMonth={month} />
-
 
             {result.ok ? (
                 result.data.length > 0 ? (

@@ -6,7 +6,7 @@ export function Input({ label, className, ...rest }: InputProps) {
             <label className="block" htmlFor={rest.id}>
                 {label}
             </label>
-            <input className={`w-full border p-1 ${className || ''}`} {...rest} />
+            <input id={rest.id} className={`w-full border p-1 ${className || ''}`} {...rest} />
         </div>
     );
 }
