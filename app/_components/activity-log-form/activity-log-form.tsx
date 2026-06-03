@@ -1,7 +1,7 @@
 import { Button } from "../button";
 import { Input } from "../input";
 
-export function ActivityLogForm({ onSubmit }: { onSubmit?: (label: string, target: number) => Promise<void> }) {
+export function ActivityLogForm({ label = "", target = 0, onSubmit }: { label?: string, target?: number, onSubmit?: (label: string, target: number) => Promise<void> }) {
     return (
         <form onSubmit={(e) => {
             e.preventDefault();
@@ -15,16 +15,22 @@ export function ActivityLogForm({ onSubmit }: { onSubmit?: (label: string, targe
             }
         }}>
             <div>
-                <Input id="create-activity-log-label" name="label" label="Label" required />
+                <Input id="create-activity-log-label" name="label" label="Label" required defaultValue={label} />
             </div>
             <div>
-                <Input id="create-activity-log-target" name="target" label="Target" type="number" required />
+                <Input id="create-activity-log-target" name="target" label="Target" type="number" required defaultValue={target} />
             </div>
             <div className="mt-4 flex justify-end">
-                <Button type="submit" variant="primary">Create Log</Button>
+                <Button type="submit" variant="primary">{label ? "Update Log" : "Create Log"}</Button>
             </div>
 
         </form>
 
     )
+}
+
+interface ActivityLogFormProps {
+    label?: string;
+    target?: number;
+    onSubmit?: (label: string, target: number) => Promise<void>;
 }

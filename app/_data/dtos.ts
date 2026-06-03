@@ -14,6 +14,12 @@ export interface ActivityLogDto {
     successes: number[]
 }
 
+export interface ActivityDto {
+    id: string;
+    label: string;
+    normalizedLabel: string;
+}
+
 export const getUserFromSession = (session: {
     session: any,
     user: {

@@ -1,9 +1,9 @@
-import { beforeAll, describe, it, expect, beforeEach, afterAll } from "vitest"
-import { createActivityLogById, CreateActivityLogByIdInput, createActivityLogByLabel, CreateActivityLogByLabelInput } from "./activity-log"
+import { beforeAll, describe, it, expect, beforeEach, afterAll, vi, Mock } from "vitest"
+import { ActivityLogInputBase, createActivityLogById, CreateActivityLogByIdInput, createActivityLogByLabel, CreateActivityLogByLabelInput, editActivityLog, EditActivityLogInput } from "./activity-log"
 import { ActivityLogDto, UserDto } from "./dtos"
 import { Result } from "@/lib/error";
 import { prisma } from "@/lib/db";
-import { UserInput } from "@/lib/types";
+import { ActivityInput, UserInput } from "@/lib/types";
 import { LOG_ALREADY_EXISTS_MESSAGE } from "@/lib/messages";
 import { MAX_ACTIVITY_LABEL_LENGTH } from "@/lib/constants";
 
@@ -275,3 +275,229 @@ describe("Create Activity Log", () => {
 })
 
 
+// ---------------------------------------------------------------------------
+// NOTE ON FILE STRUCTURE
+//
+// This block assumes shared lifecycle hooks live at FILE scope, not inside the
+// "Create Activity Log" describe. Lift these three out of that describe so both
+// suites share one cleanup path (and only ONE $disconnect runs, after both):
+//
+//   beforeAll  -> upsert testUser + otherUser, build getMockUser
+//   beforeEach -> TRUNCATE activity_logs, activities RESTART IDENTITY CASCADE
+//   afterAll   -> TRUNCATE users + logs + activities; prisma.$disconnect()
+//
+// If you instead keep hooks per-describe, the Edit block needs its OWN
+// beforeEach truncate (shown below) or its tests will leak into each other.
+// Pick one; don't run both a file-scope and a describe-scope truncate.
+// ---------------------------------------------------------------------------
+
+describe.only("Edit Activity Log", () => {
+    let user: UserDto;
+    let otherUser: UserDto;
+    let getMockUser: () => Promise<UserDto>;
+    let revalidatePaths: Mock<() => void>;
+    let testEditActivityLog: (input: EditActivityLogInput) => Promise<Result<ActivityLogDto>>;
+
+    beforeAll(async () => {
+        user = await prisma.user.upsert({
+            where: { email: testUserInput.email },
+            create: testUserInput,
+            update: {},
+        });
+        otherUser = await prisma.user.upsert({
+            where: { email: otherUserInput.email },
+            create: otherUserInput,
+            update: {},
+        });
+        getMockUser = async () => user;
+    });
+
+    // If hooks are NOT hoisted to file scope, this keeps Edit tests isolated.
+    beforeEach(async () => {
+        await prisma.$executeRawUnsafe(
+            `TRUNCATE TABLE "activity_logs", "activities" RESTART IDENTITY CASCADE`
+        );
+        // Spy seam: capture revalidate calls per-test so we can assert on/off.
+        revalidatePaths = vi.fn(() => { });
+        testEditActivityLog = async (input: EditActivityLogInput) =>
+            editActivityLog({
+                ...input,
+                sessionAuth: getMockUser,
+                revalidateFn: revalidatePaths,
+            });
+    });
+
+    afterAll(async () => {
+        await prisma.$executeRawUnsafe(
+            `TRUNCATE TABLE "users", "activity_logs", "activities" RESTART IDENTITY CASCADE`
+        );
+        await prisma.$disconnect();
+    });
+
+    // -- seed helper: one activity + one log, owned by `owner` (defaults to test user)
+    const seedActivityWithLog = async (
+        opts: {
+            label: string;
+            target?: number;
+            month?: number;
+            year?: number;
+            owner?: UserDto;
+        }
+    ) => {
+        const activity = await prisma.activity.create({
+            data: { userId: (opts.owner ?? user).id, label: opts.label },
+        });
+        const log = await prisma.activityLog.create({
+            data: {
+                activityId: activity.id,
+                target: opts.target ?? 10,
+                month: opts.month ?? 5,
+                year: opts.year ?? 2026,
+            },
+        });
+        return { activity, log };
+    };
+
+    it("changes label and target", async () => {
+        const { activity, log } = await seedActivityWithLog({
+            label: "Driving lesson",
+            target: 10,
+        });
+
+        const result = await testEditActivityLog({
+            activityLogId: log.id,
+            label: "Driving Practice",
+            target: 20,
+        });
+
+        expect(result.ok).toBe(true);
+        if (!result.ok) throw new Error(result.error.message);
+
+        const renamed = await prisma.activity.findUnique({ where: { id: activity.id } });
+        expect(renamed!.label).toBe("Driving Practice");
+
+        const persistedLog = await prisma.activityLog.findUnique({ where: { id: log.id } });
+        expect(persistedLog!.target).toBe(20);
+
+        // Revalidation
+        expect(revalidatePaths).toHaveBeenCalled();
+        expect(revalidatePaths).toHaveBeenCalledWith("/calendar");
+    });
+
+    it("writes the target even when the label is unchanged (rename-first must not eat this)", async () => {
+        // The trap in rename-first-and-bail: editing to the SAME label must not
+        // be treated as a self-collision that bails before the target write.
+        const { log } = await seedActivityWithLog({ label: "Gym", target: 10 });
+
+        const result = await testEditActivityLog({
+            activityLogId: log.id,
+            label: "Gym",
+            target: 20,
+        });
+
+        expect(result.ok).toBe(true);
+        if (!result.ok) throw new Error(result.error.message);
+
+        const l = await prisma.activityLog.findUnique({ where: { id: log.id } });
+        expect(l!.target).toBe(20);
+    });
+
+    it("returns conflict on rename-into-collision and bails before the target write", async () => {
+        // user owns "Running" and "Jogging"; rename Jogging -> running (collides).
+        await seedActivityWithLog({ label: "Running", month: 5, year: 2026 });
+        const { log: joggingLog } = await seedActivityWithLog({
+            label: "Jogging", target: 10, month: 6, year: 2026,
+        });
+
+        const result = await testEditActivityLog({
+            activityLogId: joggingLog.id,
+            label: "running",   // normalizes to collide with "Running"
+            target: 25,         // different from stored 10
+        });
+
+        expect(result.ok).toBe(false);
+        if (result.ok) throw new Error("Expected conflict");
+        expect(result.error.code).toBe("CONFLICT");
+
+        // PROOF the bail worked: the target write never landed.
+        const persisted = await prisma.activityLog.findUnique({ where: { id: joggingLog.id } });
+        expect(persisted!.target).toBe(10);
+
+        // Neither side mutated; no new activity rows.
+        const activities = await prisma.activity.findMany({ where: { userId: user.id } });
+        expect(activities).toHaveLength(2);
+        expect(activities.map((a) => a.label).sort()).toEqual(["Jogging", "Running"]);
+
+        // The conflict payload should carry enough to render a flat-model message
+        // ("You already have an activity called Running"), not a bare code.
+        // expect(result.error.message).toContain("Running");
+        expect(revalidatePaths).toHaveBeenCalledTimes(0);
+    });
+
+    it("validates BEFORE attempting the rename (bad target + collision -> BAD_REQUEST)", async () => {
+        // Validation must short-circuit before any DB write, so a request that is
+        // BOTH invalid and colliding returns BAD_REQUEST, not CONFLICT.
+        await seedActivityWithLog({ label: "Running", month: 5, year: 2026 });
+        const { log: joggingLog } = await seedActivityWithLog({
+            label: "Jogging", target: 10, month: 6, year: 2026,
+        });
+
+        const result = await testEditActivityLog({
+            activityLogId: joggingLog.id,
+            label: "running",  // would collide...
+            target: -1,        // ...but this is invalid and should win
+        });
+
+        expect(result.ok).toBe(false);
+        if (result.ok) throw new Error("Expected error");
+        expect(result.error.code).toBe("BAD_REQUEST");
+
+        // No write of any kind.
+        const persisted = await prisma.activityLog.findUnique({ where: { id: joggingLog.id } });
+        expect(persisted!.target).toBe(10);
+        const running = await prisma.activity.findFirst({ where: { userId: user.id, label: "Jogging" } });
+        expect(running).toBeTruthy(); // still named Jogging
+        expect(revalidatePaths).toHaveBeenCalledTimes(0);
+    });
+
+    it("returns not found for a nonexistent log and creates nothing", async () => {
+        const result = await testEditActivityLog({
+            activityLogId: "nonexistent-id-12345",
+            label: "Whatever",
+            target: 10,
+        });
+
+        expect(result.ok).toBe(false);
+        if (result.ok) throw new Error("Expected error");
+        expect(result.error.code).toBe("NOT_FOUND");
+
+        expect(await prisma.activity.count()).toBe(0);
+        expect(await prisma.activityLog.count()).toBe(0);
+        expect(revalidatePaths).toHaveBeenCalledTimes(0);
+    });
+
+    it("returns not found for a log owned by another user and mutates nothing", async () => {
+        const { activity, log } = await seedActivityWithLog({
+            label: "Their Activity",
+            target: 10,
+            owner: otherUser,
+        });
+
+        const result = await testEditActivityLog({
+            activityLogId: log.id,
+            label: "Hijacked",
+            target: 99,
+        });
+
+        expect(result.ok).toBe(false);
+        if (result.ok) throw new Error("Expected error");
+        expect(result.error.code).toBe("NOT_FOUND");
+
+        // Foreign data untouched.
+        const a = await prisma.activity.findUnique({ where: { id: activity.id } });
+        expect(a!.label).toBe("Their Activity");
+        const l = await prisma.activityLog.findUnique({ where: { id: log.id } });
+        expect(l!.target).toBe(10);
+        expect(revalidatePaths).toHaveBeenCalledTimes(0);
+    });
+});

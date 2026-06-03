@@ -9,3 +9,7 @@ export interface UserInput {
     name: string;
     email: string;
 }
+
+export interface ActivityInput {
+    label: string;
+}

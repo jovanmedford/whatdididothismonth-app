@@ -6,7 +6,7 @@ import { badRequestError, conflictError, internalError, notFoundError, Result, s
 import { revalidatePath } from "next/cache";
 import { normalizeLabel, validateLabel, validateMonth, validateTarget, validateYear } from "@/lib/util";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
-import { LOG_ALREADY_EXISTS_MESSAGE } from "@/lib/messages";
+import { ACTIVITY_EXISTS_MESSAGE, LOG_ALREADY_EXISTS_MESSAGE } from "@/lib/messages";
 
 
 export const getActivityLogs = async ({ year, month }: { year: number, month: number }): Promise<Result<ActivityLogDto[]>> => {
@@ -172,7 +172,64 @@ export const createActivityLogById = async ({ activityId, month, year, target, s
     }
 }
 
-interface ActivityLogInputBase {
+export const editActivityLog = async ({ activityLogId, label, target, sessionAuth = verifySession, revalidateFn = revalidatePath }: EditActivityLogInput): Promise<Result<ActivityLogDto>> => {
+    const user = await sessionAuth()
+
+    if (!user) {
+        return unauthorizedError("Unauthorized")
+    }
+
+    // Validate BEFORE any DB work so bad input short-circuits ahead of the
+    // rename attempt — a request that is both invalid and colliding is BAD_REQUEST.
+    if (!activityLogId || typeof activityLogId !== "string" || !validateLabel(label) || !validateTarget(target)) {
+        return badRequestError("Invalid input")
+    }
+
+    // ownership-scoped lookup: log must belong to one of the user's activities
+    const log = await prisma.activityLog.findFirst({
+        where: { id: activityLogId, activity: { userId: user.id } },
+    })
+
+    if (!log) {
+        return notFoundError("Activity log not found")
+    }
+
+    try {
+        const updated = await prisma.$transaction(async (tx) => {
+            await tx.activity.update({
+                where: { id: log.activityId },
+                data: { label },
+            })
+            return tx.activityLog.update({
+                where: { id: log.id },
+                data: { target },
+                include: { activity: true, successLogs: true },
+            })
+        })
+
+        revalidateFn("/calendar")
+        return success({
+            id: updated.id,
+            activityLabel: updated.activity.label,
+            month: updated.month,
+            year: updated.year,
+            target: updated.target,
+            successes: updated.successLogs.map(s => s.day),
+        })
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            if (error.code === "P2002") {
+                return conflictError(ACTIVITY_EXISTS_MESSAGE)
+            }
+        }
+        if (error instanceof Error) {
+            return internalError(error.message)
+        }
+        return internalError("Failed to edit activity log")
+    }
+}
+
+export interface ActivityLogInputBase {
     month: number;
     year: number;
     target: number;
@@ -186,4 +243,12 @@ export interface CreateActivityLogByLabelInput extends ActivityLogInputBase {
 
 export interface CreateActivityLogByIdInput extends ActivityLogInputBase {
     activityId: string;
+}
+
+export interface EditActivityLogInput {
+    activityLogId: string
+    label: string
+    target: number
+    sessionAuth?: () => Promise<UserDto | null>;
+    revalidateFn?: (path: string) => void;
 }
