@@ -27,7 +27,7 @@ export function CreateActivityLogButton({ year, month }: { year: number, month: 
 
 
     return (
-        <ResponsiveShell title="Start a new log" trigger={<Button variant="primary" className="absolute bottom-20 left-20 right-20 md:static flex justify-center">Start tracking an activity <Scale className="ml-2" /></Button>}>
+        <ResponsiveShell title="Start a new log" trigger={<Button variant="primary" className="fixed bottom-20 left-20 right-20 md:static flex justify-center">Start tracking an activity <Scale className="ml-2" /></Button>}>
             <div>
                 <ActivityLogForm onSubmit={(label, target) => handleSubmit(label, target)} />
             </div>
