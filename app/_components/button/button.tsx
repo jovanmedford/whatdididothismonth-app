@@ -17,6 +17,8 @@ function getVariantClasses(variant?: ButtonVariant) {
             return "bg-primary-400 text-background";
         case "secondary":
             return "bg-secondary-400  text-background";
+        case "transparent":
+            return "bg-transparent text-text hover:bg-highlight border-transparent";
         default:
             return "bg-gray-200 text-gray-800 hover:bg-gray-300";
     }
@@ -24,7 +26,7 @@ function getVariantClasses(variant?: ButtonVariant) {
 
 type ButtonProps = ComponentProps<"button"> & {
     className?: string
-    variant?: "primary" | "secondary"
+    variant?: ButtonVariant
 }
 
-type ButtonVariant = "primary" | "secondary"
+type ButtonVariant = "primary" | "secondary" | "transparent"
