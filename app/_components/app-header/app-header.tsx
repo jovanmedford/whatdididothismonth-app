@@ -6,7 +6,7 @@ import { verifySession } from "@/app/_data/auth";
 export async function AppHeader() {
     const user = await verifySession();
     return (
-        <header className="flex justify-between items-center mb-10">
+        <header className="flex justify-between items-center mb-4">
             <Link href="/calendar">
                 <Logo />
             </Link>
