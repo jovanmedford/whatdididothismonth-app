@@ -10,6 +10,8 @@ import MonthSelector from "./month-selector";
 import CalendarTable from "./calendar-table";
 import CalendarStack from "./calendar-stack";
 import { CreateActivityLogButton } from "../_components/create-activity-log-button";
+import { SelectionProvider } from "./selection-provider";
+import { BulkActions } from "../_components/bulk-actions";
 
 export default async function CalendarPage({
     searchParams,
@@ -41,25 +43,29 @@ export default async function CalendarPage({
     return (
         <AppPageLayout>
             <h1 className="text-center text-2xl font-bold mb-0">Calendar</h1>
+            <SelectionProvider>
+                <BulkActions></BulkActions>
+                <div className="flex justify-between w-full mb-4 items-end">
+                    <div className="flex items-end gap-4">
+                        <YearSelector searchYear={year} />
+                    </div>
+                    <CreateActivityLogButton year={year} month={month} />
+                </div>
 
-            <div className="flex justify-between w-full mb-4 items-end">
-                <YearSelector searchYear={year} />
-                <CreateActivityLogButton year={year} month={month}/>
-            </div>
+                <MonthSelector searchMonth={month} />
 
-            <MonthSelector searchMonth={month} />
-
-            {result.ok ? (
-                result.data.length > 0 ? (
-                    <CalendarLayout
-                        table={<CalendarTable logs={result.data} days={daysArray} />}
-                        stack={<CalendarStack logs={result.data} days={daysArray} />} />
+                {result.ok ? (
+                    result.data.length > 0 ? (
+                        <CalendarLayout
+                            table={<CalendarTable logs={result.data} days={daysArray} />}
+                            stack={<CalendarStack logs={result.data} days={daysArray} />} />
+                    ) : (
+                        <p className="text-center">Add activity logs to see them here.</p>
+                    )
                 ) : (
-                    <p className="text-center">Add activity logs to see them here.</p>
-                )
-            ) : (
-                <p className="text-center text-error">Failed to load activity logs.</p>
-            )}
+                    <p className="text-center text-error">Failed to load activity logs.</p>
+                )}
+            </SelectionProvider>
         </AppPageLayout>
     );
 }
