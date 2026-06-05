@@ -229,6 +229,50 @@ export const editActivityLog = async ({ activityLogId, label, target, sessionAut
     }
 }
 
+export interface DeleteActivityLogsInput {
+    activityLogIds: string[]
+    sessionAuth?: () => Promise<UserDto | null>;
+    revalidateFn?: (path: string) => void;
+}
+
+export const deleteActivityLogs = async ({ activityLogIds, sessionAuth = verifySession, revalidateFn = revalidatePath }: DeleteActivityLogsInput): Promise<Result<{ count: number }>> => {
+    const user = await sessionAuth()
+
+    if (!user) {
+        return unauthorizedError("Unauthorized")
+    }
+
+    // undefined / non-array is malformed input, distinct from an explicit empty list
+    if (!Array.isArray(activityLogIds)) {
+        return badRequestError("Invalid input")
+    }
+
+    // benign no-op: nothing to delete, skip the DB and revalidation
+    if (activityLogIds.length === 0) {
+        return success({ count: 0 })
+    }
+
+    try {
+        const { count } = await prisma.activityLog.deleteMany({
+            where: {
+                id: { in: activityLogIds },
+                activity: { userId: user.id }, // ownership scope — the entire security boundary
+            },
+        })
+
+        if (count > 0) {
+            revalidateFn("/calendar")
+        }
+
+        return success({ count })
+    } catch (error) {
+        if (error instanceof Error) {
+            return internalError(error.message)
+        }
+        return internalError("Failed to delete activity logs")
+    }
+}
+
 export interface ActivityLogInputBase {
     month: number;
     year: number;
@@ -249,6 +293,12 @@ export interface EditActivityLogInput {
     activityLogId: string
     label: string
     target: number
+    sessionAuth?: () => Promise<UserDto | null>;
+    revalidateFn?: (path: string) => void;
+}
+
+export interface DeleteActivityLogsInput {
+    activityLogIds: string[]
     sessionAuth?: () => Promise<UserDto | null>;
     revalidateFn?: (path: string) => void;
 }

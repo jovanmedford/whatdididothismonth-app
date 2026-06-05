@@ -1,9 +1,9 @@
 import { beforeAll, describe, it, expect, beforeEach, afterAll, vi, Mock } from "vitest"
-import { ActivityLogInputBase, createActivityLogById, CreateActivityLogByIdInput, createActivityLogByLabel, CreateActivityLogByLabelInput, editActivityLog, EditActivityLogInput } from "./activity-log"
+import { createActivityLogById, CreateActivityLogByIdInput, createActivityLogByLabel, CreateActivityLogByLabelInput, deleteActivityLogs, DeleteActivityLogsInput, editActivityLog, EditActivityLogInput } from "./activity-log"
 import { ActivityLogDto, UserDto } from "./dtos"
 import { Result } from "@/lib/error";
 import { prisma } from "@/lib/db";
-import { ActivityInput, UserInput } from "@/lib/types";
+import { UserInput } from "@/lib/types";
 import { LOG_ALREADY_EXISTS_MESSAGE } from "@/lib/messages";
 import { MAX_ACTIVITY_LABEL_LENGTH } from "@/lib/constants";
 
@@ -291,7 +291,7 @@ describe("Create Activity Log", () => {
 // Pick one; don't run both a file-scope and a describe-scope truncate.
 // ---------------------------------------------------------------------------
 
-describe.only("Edit Activity Log", () => {
+describe("Edit Activity Log", () => {
     let user: UserDto;
     let otherUser: UserDto;
     let getMockUser: () => Promise<UserDto>;
@@ -501,3 +501,190 @@ describe.only("Edit Activity Log", () => {
         expect(revalidatePaths).toHaveBeenCalledTimes(0);
     });
 });
+
+describe("Delete Activity Logs", () => {
+    let user: UserDto
+    let otherUser: UserDto
+    let getMockUser: () => Promise<UserDto>
+    let revalidateSpy: Mock<() => void>;
+    let testDeleteActivityLogs: (input: DeleteActivityLogsInput) => Promise<Result<{ count: number }>>
+
+    beforeAll(async () => {
+        user = await prisma.user.upsert({
+            where: { email: testUserInput.email },
+            create: testUserInput,
+            update: {},
+        })
+        otherUser = await prisma.user.upsert({
+            where: { email: otherUserInput.email },
+            create: otherUserInput,
+            update: {},
+        })
+        getMockUser = async () => user
+    })
+
+    beforeEach(async () => {
+        await prisma.$executeRawUnsafe(
+            `TRUNCATE TABLE "activity_logs", "activities" RESTART IDENTITY CASCADE`
+        )
+        revalidateSpy = vi.fn()
+        testDeleteActivityLogs = async (input: DeleteActivityLogsInput) =>
+            deleteActivityLogs({ ...input, sessionAuth: getMockUser, revalidateFn: revalidateSpy })
+    })
+
+    // one activity + one log; owner defaults to the test user
+    const seedActivityWithLog = async (opts: {
+        label: string
+        target?: number
+        month?: number
+        year?: number
+        owner?: UserDto
+    }) => {
+        const activity = await prisma.activity.create({
+            data: { userId: (opts.owner ?? user).id, label: opts.label },
+        })
+        const log = await prisma.activityLog.create({
+            data: {
+                activityId: activity.id,
+                target: opts.target ?? 10,
+                month: opts.month ?? 5,
+                year: opts.year ?? 2026,
+            },
+        })
+        return { activity, log }
+    }
+
+    // -- HAPPY PATH ----------------------------------------------------------
+
+    it("deletes a single log and leaves its activity standing (decision A)", async () => {
+        const { activity, log } = await seedActivityWithLog({ label: "Gym" })
+
+        const result = await testDeleteActivityLogs({ activityLogIds: [log.id] })
+
+        expect(result.ok).toBe(true)
+        if (!result.ok) throw new Error(result.error.message)
+        expect(result.data.count).toBe(1)
+
+        // log gone, read back from the DB
+        const remaining = await prisma.activityLog.findUnique({ where: { id: log.id } })
+        expect(remaining).toBeNull()
+
+        // activity row survives even with zero logs
+        const stillThere = await prisma.activity.findUnique({ where: { id: activity.id } })
+        expect(stillThere).toMatchObject(activity)
+    })
+
+    it("deletes multiple logs in one call with a matching count", async () => {
+        const a = await seedActivityWithLog({ label: "Gym", month: 5 })
+        const b = await seedActivityWithLog({ label: "Reading", month: 5 })
+        const c = await seedActivityWithLog({ label: "Piano", month: 5 })
+
+        const result = await testDeleteActivityLogs({
+            activityLogIds: [a.log.id, b.log.id, c.log.id],
+        })
+
+        expect(result.ok).toBe(true)
+        if (!result.ok) throw new Error(result.error.message)
+        expect(result.data.count).toBe(3)
+
+        const logCount = await prisma.activityLog.count()
+        expect(logCount).toBe(0)
+
+        const logs = await prisma.activityLog.findMany({ where: { id: { in: [a.log.id, b.log.id, c.log.id] } } })
+        expect(logs).toHaveLength(0)
+    })
+
+    it("deletes some of an activity's logs and leaves the rest (decision A)", async () => {
+        // one activity, two months; delete May, keep January
+        const activity = await prisma.activity.create({
+            data: { userId: user.id, label: "Gym" },
+        })
+        const may = await prisma.activityLog.create({
+            data: { activityId: activity.id, target: 10, month: 5, year: 2026 },
+        })
+        const jan = await prisma.activityLog.create({
+            data: { activityId: activity.id, target: 12, month: 1, year: 2026 },
+        })
+
+        const result = await testDeleteActivityLogs({ activityLogIds: [may.id] })
+
+        expect(result.ok).toBe(true)
+        if (!result.ok) throw new Error(result.error.message)
+        expect(result.data.count).toBe(1)
+
+        // May gone, January untouched
+        expect(await prisma.activityLog.findUnique({ where: { id: may.id } })).toBeNull()
+        const survivor = await prisma.activityLog.findUnique({ where: { id: jan.id } })
+        expect(survivor).toMatchObject(jan)
+    })
+
+    it("revalidates exactly once on a real deletion", async () => {
+        const { log } = await seedActivityWithLog({ label: "Gym" })
+
+        await testDeleteActivityLogs({ activityLogIds: [log.id] })
+
+        expect(revalidateSpy).toHaveBeenCalledTimes(1)
+        expect(revalidateSpy).toHaveBeenCalledWith("/calendar")
+    })
+
+    // -- LIST EDGE CASES -----------------------------------------------------
+
+    it("treats an empty list as a benign no-op (count 0, no revalidate)", async () => {
+        const { log } = await seedActivityWithLog({ label: "Gym" })
+
+        const result = await testDeleteActivityLogs({ activityLogIds: [] })
+
+        expect(result.ok).toBe(true)
+        if (!result.ok) throw new Error(result.error.message)
+        expect(result.data.count).toBe(0)
+
+        // nothing deleted, no revalidation
+        expect(await prisma.activityLog.findUnique({ where: { id: log.id } })).toBeTruthy()
+        expect(revalidateSpy).toHaveBeenCalledTimes(0)
+    })
+
+    it("deletes a duplicated id only once", async () => {
+        const { log } = await seedActivityWithLog({ label: "Gym" })
+
+        const result = await testDeleteActivityLogs({ activityLogIds: [log.id, log.id] })
+
+        expect(result.ok).toBe(true)
+        if (!result.ok) throw new Error(result.error.message)
+        expect(result.data.count).toBe(1)
+        expect(await prisma.activityLog.findUnique({ where: { id: log.id } })).toBeNull()
+    })
+
+    it("ignores nonexistent ids and deletes the valid ones (lenient)", async () => {
+        const { log } = await seedActivityWithLog({ label: "Gym" })
+
+        const result = await testDeleteActivityLogs({
+            activityLogIds: [log.id, "nonexistent-id-12345"],
+        })
+
+        expect(result.ok).toBe(true)
+        if (!result.ok) throw new Error(result.error.message)
+        expect(result.data.count).toBe(1)
+        expect(await prisma.activityLog.findUnique({ where: { id: log.id } })).toBeNull()
+    })
+
+    it("deletes only the caller's logs when foreign ids are mixed in (SECURITY)", async () => {
+        const mine = await seedActivityWithLog({ label: "Gym" })
+        const theirs = await seedActivityWithLog({ label: "Their Gym", owner: otherUser })
+
+        const result = await testDeleteActivityLogs({
+            activityLogIds: [mine.log.id, theirs.log.id],
+        })
+
+        expect(result.ok).toBe(true)
+        if (!result.ok) throw new Error(result.error.message)
+        // count reflects ONLY the caller's deletion
+        expect(result.data.count).toBe(1)
+
+        // mine gone, theirs survives untouched
+        expect(await prisma.activityLog.findUnique({ where: { id: mine.log.id } })).toBeNull()
+        expect(await prisma.activityLog.findUnique({ where: { id: theirs.log.id } })).toMatchObject(theirs.log)
+
+        // a real deletion happened, so revalidate fires
+        expect(revalidateSpy).toHaveBeenCalledTimes(1)
+    })
+})
