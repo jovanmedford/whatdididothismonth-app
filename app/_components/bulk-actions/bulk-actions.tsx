@@ -2,8 +2,9 @@
 
 import { useSelection } from "@/app/calendar/selection-provider";
 import { Button } from "../button";
-import { Trash, RotateCw } from 'lucide-react';
+import { RotateCw } from 'lucide-react';
 import { CheckBox } from "../calendar/checkbox";
+import { DeleteLogsButton } from "../delete-logs-button";
 
 
 export function BulkActions() {
@@ -14,9 +15,7 @@ export function BulkActions() {
             <CheckBox label="Select log" onChange={() => { console.log("SELECT ALL") }} />
 
             {selectedLogs.length > 0 ? (
-                <Button variant="transparent">
-                    <Trash className="size-4" />
-                </Button>
+                <DeleteLogsButton logs={selectedLogs.map((log) => log.id)} />
             ) : <Button variant="transparent">
                 <RotateCw className="size-4" />
             </Button>}

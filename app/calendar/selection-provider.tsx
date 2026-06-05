@@ -7,6 +7,7 @@ const SelectionContext = createContext<SelectionCtx | null>(null)
 interface SelectionCtx {
     selectedLogs: ActivityLogDto[];
     toggleLogSelection: (log: ActivityLogDto) => void;
+    clearSelection: () => void;
 }
 
 export const SelectionProvider = ({ children }: { children: ReactNode }) => {
@@ -22,8 +23,12 @@ export const SelectionProvider = ({ children }: { children: ReactNode }) => {
         })
     }
 
+    function clearSelection() {
+        setSelectedLogs([]);
+    }
+
     return (
-        <SelectionContext.Provider value={{ selectedLogs, toggleLogSelection }}>
+        <SelectionContext.Provider value={{ selectedLogs, toggleLogSelection, clearSelection }}>
             {children}
         </SelectionContext.Provider>
     )
