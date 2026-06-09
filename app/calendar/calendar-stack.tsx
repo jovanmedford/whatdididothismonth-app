@@ -2,6 +2,7 @@ import { CalendarViewProps } from "@/lib/types";
 import { SuccessSquare } from "../_components/success-square";
 import { EditActivityLogButton } from "../_components/edit-activity-log-button";
 import { CalendarCheckbox } from "../_components/calendar";
+import { CalendarLabel } from "./calendar-label";
 
 export default function CalendarStack({ logs, days }: CalendarViewProps) {
     return (
@@ -11,10 +12,7 @@ export default function CalendarStack({ logs, days }: CalendarViewProps) {
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-6">
                             <CalendarCheckbox className="size-7" log={log} />
-                            <div>
-                                <h2>{log.activityLabel}</h2>
-                                <span className="block">{log.successes.length} / {log.target}</span>
-                            </div>
+                            <CalendarLabel label={log.activityLabel} successes={log.successes.length} target={log.target} />
                         </div>
                         <EditActivityLogButton log={log} />
                     </div>

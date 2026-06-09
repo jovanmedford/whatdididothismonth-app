@@ -31,3 +31,5 @@ export const validateLabel = (label: string) => {
 export const validateInput = (input: any, validators: ((value: any) => boolean)[]) => {
     return validators.every(validate => validate(input))
 }
+
+ export const getDaysInMonth = (year: number, month: number) => new Date(year, month, 0).getDate();

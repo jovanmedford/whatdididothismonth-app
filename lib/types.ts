@@ -13,3 +13,16 @@ export interface UserInput {
 export interface ActivityInput {
     label: string;
 }
+
+export type ActivityLogStatus = "SUCCESS" | "OUT_OF_REACH" | "IN_PROGRESS"
+
+export interface CalendarViewDate {
+    year: number
+    month: number
+}
+
+export interface CalendarViewToday {
+    year: number
+    month: number
+    day: number
+}
