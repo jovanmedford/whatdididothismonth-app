@@ -1,36 +1,18 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+  <a href="#">
+    <img src="./.github/assets/wdidtm-home.svg" alt="WDIDTM homepage" width="1000">
+  </a>
+</p>
 
-## Getting Started
+<h1 align="center">What did I do this month?</h1>
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+# Introduction
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+I am guilty of juggling too many balls at one time. The challenge isn't the juggling, it's actually realizing that a ball fell. So I decided to build WDIDTM, to keep a bird's eye view of how many times I've shown up for the activities that are most important. 
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+WDIDTM focuses on long term commitment over daily streaks. Streaks are great for building momentum and using the original motivation in order to get off to a good start. However, they put too much pressure to meet unrealistic standards. 
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+On the other hand, it is incredible how quietly months can pass by without noticing you haven't made progress towards your goals.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The hope is by maintaining a snapshot of where you are each month, you can recommit to your long term vision.
