@@ -4,6 +4,7 @@ import { EditActivityLogButton } from "../_components/edit-activity-log-button"
 import { CalendarRow } from "./calendar-row"
 import { CalendarCheckbox } from "../_components/calendar"
 import { CalendarLabel } from "./calendar-label"
+import { getReachedStatus } from "@/lib/util"
 
 
 export default function CalendarTable({ logs, days }: CalendarViewProps) {
@@ -22,7 +23,7 @@ export default function CalendarTable({ logs, days }: CalendarViewProps) {
                             </div>
                         </td>
                         <td className="grid grid-cols-16 gap-4 p-4">
-                            {days.map((day) => <SuccessSquare key={day} activityLogId={log.id} day={day} initialChecked={log.successes.includes(day)} />)}
+                            {days.map((day) => <SuccessSquare key={day} activityLogId={log.id} day={day} initialChecked={log.successes.includes(day)} isReached={getReachedStatus(log)} />)}
                         </td>
                     </CalendarRow>
                 ))}

@@ -14,7 +14,7 @@ export function ActivityLogBadge({ status }: ActivityLogBadgeProps) {
 function getBadge(status: ActivityLogStatus) {
     switch(status) {
         case "SUCCESS":
-            return  <BadgeCheck className='fill-success stroke-white' />
+            return  <BadgeCheck className='fill-reached stroke-white' />
         case "OUT_OF_REACH":
             return <CircleMinus className='size-4 stroke-text opacity-80' />
         default: <div></div>

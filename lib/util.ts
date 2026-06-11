@@ -1,3 +1,4 @@
+import { ActivityLogDto } from "@/app/_data/dtos"
 import { MAX_ACTIVITY_LABEL_LENGTH } from "./constants"
 
 export const clsx = (...args: (string | boolean | null | undefined)[]) => {
@@ -32,4 +33,8 @@ export const validateInput = (input: any, validators: ((value: any) => boolean)[
     return validators.every(validate => validate(input))
 }
 
- export const getDaysInMonth = (year: number, month: number) => new Date(year, month, 0).getDate();
+export const getDaysInMonth = (year: number, month: number) => new Date(year, month, 0).getDate();
+
+export const getReachedStatus = (log: ActivityLogDto) => {
+    return log.successes.length >= log.target
+}

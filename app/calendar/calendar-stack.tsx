@@ -3,6 +3,7 @@ import { SuccessSquare } from "../_components/success-square";
 import { EditActivityLogButton } from "../_components/edit-activity-log-button";
 import { CalendarCheckbox } from "../_components/calendar";
 import { CalendarLabel } from "./calendar-label";
+import { getReachedStatus } from "@/lib/util";
 
 export default function CalendarStack({ logs, days }: CalendarViewProps) {
     return (
@@ -17,7 +18,7 @@ export default function CalendarStack({ logs, days }: CalendarViewProps) {
                         <EditActivityLogButton log={log} />
                     </div>
                     <div className="grid grid-cols-7 gap-y-2 mt-2">
-                        {days.map((day) => <SuccessSquare key={day} activityLogId={log.id} day={day} initialChecked={log.successes.includes(day)} />)}
+                        {days.map((day) => <SuccessSquare key={day} activityLogId={log.id} day={day} initialChecked={log.successes.includes(day)} isReached={getReachedStatus(log)} />)}
                     </div>
                 </div>
 
