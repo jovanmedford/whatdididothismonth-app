@@ -14,14 +14,13 @@ export default function YearSelector({ searchYear }: { searchYear: number }) {
     }
 
     return (
-        <div className="text-align-center mx-auto text-md w-fit my-2 md:my-0 md:mx-0">
-            <select name="year" aria-label="Select Year" value={searchYear} onChange={handleYearChange}>
-                {years.map((year) => (
-                    <option key={year} value={year}>
-                        {year}
-                    </option>
-                ))}
-            </select>
-        </div>
+
+        <select name="year" aria-label="Select Year" value={searchYear} onChange={handleYearChange}>
+            {years.map((year) => (
+                <option key={year} value={year}>
+                    {year}
+                </option>
+            ))}
+        </select>
     )
 }
