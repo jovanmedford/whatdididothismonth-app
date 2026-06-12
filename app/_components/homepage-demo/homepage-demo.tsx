@@ -31,7 +31,7 @@ export function HomePageDemo() {
         </form>
         <div>
             <div className="flex gap-4 w-fit mx-auto mt-8" >
-                {SQUARES.map((day) => <Square key={day} isChecked={current.successes.has(day)} isReached={isReached} onChange={() => handleToggle(day)} />)}
+                {SQUARES.map((day) => <Square key={day} day={day} isChecked={current.successes.has(day)} isReached={isReached} onChange={() => handleToggle(day)} />)}
             </div>
         </div>
     </div>)

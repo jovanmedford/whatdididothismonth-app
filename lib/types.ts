@@ -21,8 +21,6 @@ export interface CalendarViewDate {
     month: number
 }
 
-export interface CalendarViewToday {
-    year: number
-    month: number
+export interface CalendarViewFullDate extends CalendarViewDate{
     day: number
 }

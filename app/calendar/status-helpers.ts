@@ -1,4 +1,4 @@
-import { ActivityLogStatus, CalendarViewDate, CalendarViewToday } from "@/lib/types"
+import { ActivityLogStatus, CalendarViewDate, CalendarViewFullDate } from "@/lib/types"
 import { getDaysInMonth } from "@/lib/util"
 
 
@@ -12,7 +12,7 @@ export function getToday() {
     }
 }
 
-export function getDaysRemaining(calendarDate: CalendarViewDate, today: CalendarViewToday) {
+export function getDaysRemaining(calendarDate: CalendarViewDate, today: CalendarViewFullDate) {
     if (calendarDate.year !== today.year || calendarDate.month !== today.month) {
         return 0
     }
@@ -20,6 +20,14 @@ export function getDaysRemaining(calendarDate: CalendarViewDate, today: Calendar
     const daysInMonth = getDaysInMonth(today.year, today.month)
 
     return daysInMonth - today.day
+}
+
+export function isDayDisabled(calendarDate: CalendarViewFullDate, today: CalendarViewFullDate) {
+    if (calendarDate.year !== today.year || calendarDate.month !== today.month) {
+        return false
+    }
+
+    return today.day < calendarDate.day
 }
 
 /**

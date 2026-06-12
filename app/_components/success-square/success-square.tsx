@@ -8,7 +8,7 @@ import { toast } from "../toast/store";
 /**
  * Thin wrapper around Square that fires addSuccess and deleteSuccess on click, depending on the current state of the square.
  */
-export function SuccessSquare({ activityLogId, day, initialChecked, isReached, className }: SuccessSquareProps) {
+export function SuccessSquare({ activityLogId, day, initialChecked, isReached, className, disabled }: SuccessSquareProps) {
     const [checked, setChecked] = useState(initialChecked)
     const [optimisticChecked, setOptimisticChecked] = useOptimistic(checked)
     const [isPending, startTransition] = useTransition()
@@ -34,13 +34,14 @@ export function SuccessSquare({ activityLogId, day, initialChecked, isReached, c
     }
 
     return (
-        <Square className={className} isChecked={optimisticChecked} isReached={isReached} onChange={handleToggle} disabled={isPending} />
+        <Square className={className} day={day} isChecked={optimisticChecked} isReached={isReached} onChange={handleToggle} disabled={isPending || disabled} />
     )
 }
 
 
 interface SuccessSquareProps {
     className?: string
+    disabled?: boolean
     activityLogId: string
     day: number
     initialChecked: boolean
