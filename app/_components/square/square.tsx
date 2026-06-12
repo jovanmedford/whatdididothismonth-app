@@ -42,7 +42,7 @@ export default function Square({
                 readOnly={!!onChange}
                 disabled={disabled}
             />
-            <span className={clsx("flex items-center justify-center h-full")}>{!disabled ? day : null}</span>
+            <span className={clsx("flex items-top justify-end h-full text-xs tabular-nums pr-1")}>{!disabled ? day : null}</span>
         </label>
     );
 }

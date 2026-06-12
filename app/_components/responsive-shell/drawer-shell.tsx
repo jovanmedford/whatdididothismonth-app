@@ -17,8 +17,8 @@ export function DrawerShell({ trigger, children, title }: ResponsiveShellProps) 
             <DrawerTrigger asChild>
                 {trigger}
             </DrawerTrigger>
-            <DrawerContent>
-                <DrawerHeader className="flex">
+            <DrawerContent className="p-4">
+                <DrawerHeader className="flex flex-row align-center justify-center gap-4 px-0">
                     <DrawerTitle>{title}</DrawerTitle>
                     <DrawerClose>
                         <X />
