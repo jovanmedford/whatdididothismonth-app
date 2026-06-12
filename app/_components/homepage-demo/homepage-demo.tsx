@@ -23,7 +23,7 @@ export function HomePageDemo() {
         <form>
             <p className="text-center">
                 I want to {" "}
-                <select id="wdidtm-demo-activity" className="text-primary-400 underline hover:cursor-pointer" value={visible} onChange={(e) => setVisibile(e.target.value)}>
+                <select id="wdidtm-demo-activity" className="field-sizing-content text-primary-400 underline hover:cursor-pointer" value={visible} onChange={(e) => setVisibile(e.target.value)}>
                     {ACTIVITIES.map(activity => <option key={activity.id} value={activity.id}>{activity.label}</option>)}
                 </select>
                 at least <span className="font-bold">{current?.target} times</span>
