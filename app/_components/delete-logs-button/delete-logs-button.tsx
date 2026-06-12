@@ -40,8 +40,8 @@ export function DeleteLogsButton({ logs }: { logs: string[] }) {
     return (
         <Dialog.Root open={isOpen} onOpenChange={handleOpenChange}>
             <Dialog.Trigger asChild>
-                <Button variant="transparent" aria-label="Delete Logs">
-                    <Trash className="size-4" />
+                <Button variant="transparent"  aria-label="Delete Logs">
+                    <Trash className="size-4 hover:text-error" />
                 </Button>
             </Dialog.Trigger>
             <Dialog.Portal>

@@ -48,10 +48,11 @@ export default async function CalendarPage({
             <DateProvider year={year} month={month}>
                 <SelectionProvider>
 
-                    <BulkActions></BulkActions>
+
                     <div className="flex justify-between w-full mb-4 items-end">
-                        <div className="flex items-end gap-4">
+                        <div className="flex gap-4 mx-auto mt-4 md:mx-0">
                             <YearSelector searchYear={year} />
+                            <BulkActions />
                         </div>
                         <CreateActivityLogButton year={year} month={month} />
                     </div>
