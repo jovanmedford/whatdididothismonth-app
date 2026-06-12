@@ -45,8 +45,9 @@ export default async function CalendarPage({
     return (
         <AppPageLayout>
             <h1 className="text-center text-2xl font-bold mb-0">Calendar</h1>
-            <SelectionProvider>
-                <DateProvider year={year} month={month}>
+            <DateProvider year={year} month={month}>
+                <SelectionProvider>
+
                     <BulkActions></BulkActions>
                     <div className="flex justify-between w-full mb-4 items-end">
                         <div className="flex items-end gap-4">
@@ -68,8 +69,9 @@ export default async function CalendarPage({
                     ) : (
                         <p className="text-center text-error">Failed to load activity logs.</p>
                     )}
-                </DateProvider>
-            </SelectionProvider>
-        </AppPageLayout>
+
+                </SelectionProvider>
+            </DateProvider>
+        </AppPageLayout >
     );
 }

@@ -1,6 +1,7 @@
 "use client"
-import { createContext, useState, ReactNode, useContext } from "react";
+import { createContext, useState, ReactNode, useContext, useEffect } from "react";
 import { ActivityLogDto } from "../_data/dtos";
+import { useCalendarDate } from "./date-provider";
 
 const SelectionContext = createContext<SelectionCtx | null>(null)
 
@@ -12,6 +13,11 @@ interface SelectionCtx {
 
 export const SelectionProvider = ({ children }: { children: ReactNode }) => {
     const [selectedLogs, setSelectedLogs] = useState<ActivityLogDto[]>([])
+    const {year, month} = useCalendarDate()
+
+    useEffect(() => {
+        clearSelection()
+    }, [year, month])
 
     function toggleLogSelection(log: ActivityLogDto) {
         setSelectedLogs(prev => {
