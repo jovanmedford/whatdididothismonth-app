@@ -30,6 +30,9 @@ export default function SignUpForm() {
                 return;
             }
 
+            // no email verification at this point
+            router.push("/calendar")
+
         } catch (error) {
             console.error("[auth] sign-up threw", error);
             toast.error("Something went wrong. Please try again.");
