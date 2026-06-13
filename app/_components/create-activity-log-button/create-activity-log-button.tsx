@@ -5,10 +5,10 @@ import { toast } from "../toast/store";
 import { ResponsiveShell } from "../responsive-shell";
 import { Scale } from 'lucide-react';
 import { ActivityLogForm } from "../activity-log-form";
+import clsx from "clsx";
 
-export function CreateActivityLogButton({ year, month }: { year: number, month: number }) {
+export function CreateActivityLogButton({ year, month, className }: { year: number, month: number, className?: string }) {
     async function handleSubmit(label: string, target: number) {
-        console.log({ label, target, year, month })
 
         const result = await createActivityLogByLabel({
             label,
@@ -25,7 +25,7 @@ export function CreateActivityLogButton({ year, month }: { year: number, month: 
 
 
     return (
-        <ResponsiveShell title="Start a new log" trigger={<Button variant="primary" className="fixed bottom-20 left-20 right-20 md:static flex justify-center">Track an activity <Scale className="ml-2" /></Button>}>
+        <ResponsiveShell title="Start a new log" trigger={<Button variant="primary" className={clsx("flex justify-center", className)}>Track an activity <Scale className="ml-2" /></Button>}>
             <div>
                 <ActivityLogForm onSubmit={(label, target) => handleSubmit(label, target)} />
             </div>

@@ -54,10 +54,12 @@ export default async function CalendarPage({
                             <YearSelector searchYear={year} />
                             <BulkActions />
                         </div>
-                        <CreateActivityLogButton year={year} month={month} />
+                        <CreateActivityLogButton year={year} month={month} className="hidden md:flex" />
                     </div>
 
                     <MonthSelector searchMonth={month} />
+
+                    <CreateActivityLogButton year={year} month={month} className="flex md:hidden mx-auto md:mx-0 mb-8" />
 
                     {result.ok ? (
                         result.data.length > 0 ? (

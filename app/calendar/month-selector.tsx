@@ -24,7 +24,7 @@ export default function MonthSelector({ searchMonth }: { searchMonth: number }) 
 
 function MonthSelect({ onChange, value }: { onChange: (event: ChangeEvent<HTMLSelectElement>) => void; value: number }) {
     return (
-        <div className="md:hidden w-fit mx-auto mb-8">
+        <div className="md:hidden w-fit mx-auto mb-2">
             <select name="month" onChange={onChange} value={value}>
 
                 {MONTHS.map((month) => (
