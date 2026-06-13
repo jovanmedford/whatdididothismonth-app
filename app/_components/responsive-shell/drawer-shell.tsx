@@ -11,9 +11,9 @@ import {
 import { ResponsiveShellProps } from "./responsive-shell"
 import { X } from "lucide-react"
 
-export function DrawerShell({ trigger, children, title }: ResponsiveShellProps) {
+export function DrawerShell({ trigger, children, title, open, onOpenChange }: ResponsiveShellProps) {
     return (
-        <Drawer>
+        <Drawer open={open} onOpenChange={onOpenChange}>
             <DrawerTrigger asChild>
                 {trigger}
             </DrawerTrigger>

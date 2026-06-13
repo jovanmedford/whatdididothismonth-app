@@ -6,8 +6,10 @@ import { ResponsiveShell } from "../responsive-shell";
 import { ActivityLogForm } from "../activity-log-form";
 import { ActivityLogDto } from "@/app/_data/dtos";
 import { Pen } from 'lucide-react';
+import { useState } from "react";
 
 export function EditActivityLogButton({ log }: { log: ActivityLogDto }) {
+    const [open, setOpen] = useState(false)
 
     async function handleSubmit(label: string, target: number) {
 
@@ -21,13 +23,13 @@ export function EditActivityLogButton({ log }: { log: ActivityLogDto }) {
             toast.error(result.error.message)
         }
 
-        console.log(result)
+        setOpen(false)
     }
 
 
 
     return (
-        <ResponsiveShell title={`Edit ${log.activityLabel}`} trigger={<Button variant="transparent"  aria-label={`Edit ${log.activityLabel}`}><Pen /></Button>}>
+        <ResponsiveShell open={open} onOpenChange={setOpen} title={`Edit ${log.activityLabel}`} trigger={<Button variant="transparent" aria-label={`Edit ${log.activityLabel}`}><Pen /></Button>}>
             <div>
                 <ActivityLogForm label={log.activityLabel} target={log.target} onSubmit={(label, target) => handleSubmit(label, target)} />
             </div>

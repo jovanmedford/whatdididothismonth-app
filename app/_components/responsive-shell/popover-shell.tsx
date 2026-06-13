@@ -3,9 +3,9 @@ import { Popover } from "radix-ui";
 import { ResponsiveShellProps } from "./responsive-shell";
 
 
-export function PopoverShell({ trigger, children }: ResponsiveShellProps) {
+export function PopoverShell({ trigger, children, open, onOpenChange }: ResponsiveShellProps) {
     return (
-        <Popover.Root>
+        <Popover.Root open={open} onOpenChange={onOpenChange}>
             <Popover.Trigger asChild>
                 {trigger}
             </Popover.Trigger>
