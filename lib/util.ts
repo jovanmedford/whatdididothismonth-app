@@ -1,6 +1,11 @@
 import { ActivityLogDto } from "@/app/_data/dtos"
 import { MAX_ACTIVITY_LABEL_LENGTH } from "./constants"
 
+const DAYS_PER_WEEK = 7
+const SUNDAY_INDEX = 0
+const SATURDAY_INDEX = DAYS_PER_WEEK - 1
+const JAVASCRIPT_MONTH_INDEX_OFFSET = 1
+
 export const clsx = (...args: (string | boolean | null | undefined)[]) => {
     return args.filter(Boolean).join(" ")
 }
@@ -34,6 +39,32 @@ export const validateInput = (input: any, validators: ((value: any) => boolean)[
 }
 
 export const getDaysInMonth = (year: number, month: number) => new Date(year, month, 0).getDate();
+
+export const getWeekday = (year: number, month: number, day: number) => {
+    return new Date(year, month - JAVASCRIPT_MONTH_INDEX_OFFSET, day).getDay()
+}
+
+export const groupDaysBySaturday = (days: number[], year: number, month: number) => {
+    const groups: Array<Array<number | null>> = []
+    const leadingDays = (getWeekday(year, month, days[0]) - SUNDAY_INDEX + DAYS_PER_WEEK) % DAYS_PER_WEEK
+    let currentGroup: Array<number | null> = Array<null>(leadingDays).fill(null)
+
+    for (const day of days) {
+        currentGroup.push(day)
+
+        if (getWeekday(year, month, day) === SATURDAY_INDEX) {
+            groups.push(currentGroup)
+            currentGroup = []
+        }
+    }
+
+    if (currentGroup.length > 0) {
+        currentGroup.push(...Array<null>(DAYS_PER_WEEK - currentGroup.length).fill(null))
+        groups.push(currentGroup)
+    }
+
+    return groups
+}
 
 export const getReachedStatus = (log: ActivityLogDto) => {
     return log.successes.length >= log.target
