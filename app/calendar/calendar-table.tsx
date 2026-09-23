@@ -16,7 +16,11 @@ export default function CalendarTable({ logs, days }: CalendarViewProps) {
     const weekGroups = groupDaysBySaturday(days, year, month)
 
     return (
-        <table className="w-full">
+        <table className="w-full table-fixed">
+            <colgroup>
+                <col className="w-44 lg:w-56 xl:w-64" />
+                <col />
+            </colgroup>
             <tbody>
                 {logs.map(log => (
                     <CalendarRow key={log.id} log={log}>
@@ -30,7 +34,7 @@ export default function CalendarTable({ logs, days }: CalendarViewProps) {
                             </div>
                         </td>
                         <td className="p-4">
-                            <div className="grid grid-cols-2 gap-y-4 lg:grid-cols-3 2xl:grid-cols-5">
+                            <div className="grid grid-cols-[repeat(auto-fit,minmax(15.5rem,1fr))] gap-y-4">
                                 {weekGroups.map((week, weekIndex) => (
                                     <div
                                         key={`week-${weekIndex}`}
@@ -38,7 +42,7 @@ export default function CalendarTable({ logs, days }: CalendarViewProps) {
                                         role="group"
                                         aria-label={`Week ${weekIndex + 1}`}
                                     >
-                                        <div className="col-start-2 flex gap-1">
+                                        <div className="col-start-2 flex gap-0.5">
                                             {week.map((day, dayIndex) => day === null ? (
                                                 <span key={`empty-${dayIndex}`} className="size-8" aria-hidden="true" />
                                             ) : (
