@@ -5,9 +5,9 @@ import { BadgeCheck } from 'lucide-react';
 
 export function ActivityLogBadge({ status }: ActivityLogBadgeProps) {
     return (
-        <div className='size-4'>
+        <span className='size-4'>
             {getBadge(status)}
-        </div>
+        </span>
     )
 }
 
@@ -24,4 +24,3 @@ function getBadge(status: ActivityLogStatus) {
 interface ActivityLogBadgeProps {
     status: ActivityLogStatus
 }
-

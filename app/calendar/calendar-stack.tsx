@@ -17,11 +17,10 @@ export default function CalendarStack({ logs, days }: CalendarViewProps) {
         <div className="flex flex-col gap-12 mb-8">
             {logs.map(log => (
                 <div key={log.id} >
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-6">
-                            <CalendarCheckbox className="size-7" log={log} />
+                    <div className="flex items-stretch justify-between gap-4">
+                        <CalendarCheckbox className="flex-1" log={log}>
                             <CalendarLabel label={log.activityLabel} successes={log.successes.length} target={log.target} />
-                        </div>
+                        </CalendarCheckbox>
                         <EditActivityLogButton log={log} />
                     </div>
                     <div className="grid grid-cols-7 gap-2 gap-y-4 mt-2">

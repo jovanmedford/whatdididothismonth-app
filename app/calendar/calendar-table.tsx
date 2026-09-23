@@ -24,11 +24,11 @@ export default function CalendarTable({ logs, days }: CalendarViewProps) {
             <tbody>
                 {logs.map(log => (
                     <CalendarRow key={log.id} log={log}>
-                        <td className="border-r py-4 pr-4 ">
-                            <div className="flex items-center gap-6">
-                                <CalendarCheckbox log={log} />
-                                <div className="flex justify-between w-full">
-                                    <CalendarLabel label={log.activityLabel} successes={log.successes.length} target={log.target} />
+                        <td className="relative border-r p-0">
+                            <CalendarCheckbox className="absolute inset-0 rounded-none p-0" log={log} />
+                            <div className="pointer-events-none relative flex h-full items-center px-4 py-4">
+                                <CalendarLabel label={log.activityLabel} successes={log.successes.length} target={log.target} />
+                                <div className="pointer-events-auto relative z-10 ml-auto flex items-center">
                                     <EditActivityLogButton log={log} />
                                 </div>
                             </div>

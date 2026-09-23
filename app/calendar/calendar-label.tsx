@@ -10,13 +10,13 @@ export function CalendarLabel({ label, successes, target }: CalendarLabelProps) 
     const daysRemaining = getDaysRemaining(viewDate, today)
     const status = getLogStatus({ successes, target, daysRemaining })
     return (
-        <div>
-            <div className="flex gap-1">
-                <h2>{label}</h2>
+        <span className="block">
+            <span className="flex gap-1">
+                <span role="heading" aria-level={2}>{label}</span>
                 <ActivityLogBadge status={status} />
-            </div>
+            </span>
             <span className="block">{successes} / {target}</span>
-        </div>
+        </span>
     )
 }
 

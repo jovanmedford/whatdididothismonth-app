@@ -1,23 +1,33 @@
 "use client"
 import { ActivityLogDto } from "@/app/_data/dtos"
 import { useSelection } from "@/app/calendar/selection-provider";
-import clsx from "clsx";
-import { Check } from 'lucide-react';
+import { cn } from "@/lib/utils";
+import type { ReactNode } from "react";
 
-export function CalendarCheckbox({ log, className }: { log: ActivityLogDto; className?: string }) {
+export function CalendarCheckbox({ log, children, className }: CalendarCheckboxProps) {
     const { selectedLogs, toggleLogSelection } = useSelection();
     const isChecked = selectedLogs.some(selectedLog => selectedLog.id === log.id);
 
     return (
-        <label className={clsx("block cursor-pointer focus-within:outline-2 relative p-2 checkbox-parent size-4 border border-text rounded", isChecked ? "bg-text border-primary-400" : "hover:bg-highlight", className)}>
-            <p className="sr-only">Select log: {log.activityLabel}</p>
+        <label className={cn(
+            "flex min-w-0 cursor-pointer items-center rounded px-2 py-1 transition-colors focus-within:outline-2 focus-within:outline-offset-2",
+            isChecked ? "bg-primary-400/10 ring-1 ring-inset ring-primary-400/40" : "hover:bg-highlight",
+            className
+        )}>
             <input
                 className="sr-only"
                 type="checkbox"
                 checked={isChecked}
                 onChange={() => toggleLogSelection(log)}
+                aria-label={`Select activity log: ${log.activityLabel}`}
             />
-            {isChecked && <Check className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white size-4" />}
+            {children}
         </label>
     )
+}
+
+interface CalendarCheckboxProps {
+    log: ActivityLogDto
+    children?: ReactNode
+    className?: string
 }
