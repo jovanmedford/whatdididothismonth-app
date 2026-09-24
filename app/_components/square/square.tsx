@@ -30,7 +30,7 @@ export default function Square({
                 getBackgroundColor(isChecked, isReached),
                 className,
                 isBooping && "boop-animation",
-                disabled && "opacity-30"
+                disabled && "cursor-not-allowed opacity-50"
             )}
             onAnimationEnd={() => setIsBooping(false)}
         >
@@ -42,7 +42,7 @@ export default function Square({
                 readOnly={!!onChange}
                 disabled={disabled}
             />
-            <span className={clsx("flex items-center justify-center h-full text-sm tabular-nums w-8")}>{!disabled ? day : null}</span>
+            <span className={clsx("flex items-center justify-center h-full text-sm tabular-nums w-8")}>{day}</span>
         </label>
     );
 }

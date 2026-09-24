@@ -34,34 +34,27 @@ export default function CalendarTable({ logs, days }: CalendarViewProps) {
                             </div>
                         </td>
                         <td className="p-4">
-                            <div className="grid grid-cols-[repeat(auto-fit,minmax(15.5rem,1fr))] gap-y-4">
+                            <div className="flex flex-wrap gap-x-4 gap-y-4">
                                 {weekGroups.map((week, weekIndex) => (
                                     <div
                                         key={`week-${weekIndex}`}
-                                        className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center"
+                                        className="flex w-59 shrink-0 gap-0.5"
                                         role="group"
                                         aria-label={`Week ${weekIndex + 1}`}
                                     >
-                                        <div className="col-start-2 flex gap-0.5">
-                                            {week.map((day, dayIndex) => day === null ? (
-                                                <span key={`empty-${dayIndex}`} className="size-8" aria-hidden="true" />
-                                            ) : (
-                                                <SuccessSquare
-                                                    key={day}
-                                                    className="size-8"
-                                                    activityLogId={log.id}
-                                                    day={day}
-                                                    disabled={isDayDisabled({ year, month, day }, today)}
-                                                    initialChecked={log.successes.includes(day)}
-                                                    isReached={getReachedStatus(log)}
-                                                />
-                                            ))}
-                                        </div>
-                                        {weekIndex < weekGroups.length - 1 && (
-                                            <div className="col-start-3 flex justify-end" aria-hidden="true">
-                                                <span className="h-4 w-px bg-text-light/50" />
-                                            </div>
-                                        )}
+                                        {week.map((day, dayIndex) => day === null ? (
+                                            <span key={`empty-${dayIndex}`} className="size-8" aria-hidden="true" />
+                                        ) : (
+                                            <SuccessSquare
+                                                key={day}
+                                                className="size-8"
+                                                activityLogId={log.id}
+                                                day={day}
+                                                disabled={isDayDisabled({ year, month, day }, today)}
+                                                initialChecked={log.successes.includes(day)}
+                                                isReached={getReachedStatus(log)}
+                                            />
+                                        ))}
                                     </div>
                                 ))}
                             </div>
