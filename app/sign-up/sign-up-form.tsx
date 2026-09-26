@@ -47,7 +47,7 @@ export default function SignUpForm() {
                 <Input disabled={loading} label="Name" type="text" id="name" name="name" required placeholder="John Smith" />
                 <Input disabled={loading} label="Email" type="email" id="email" name="email" required placeholder="Email" />
                 <Input disabled={loading} minLength={8} label="Password" type="password" id="password" name="password" required placeholder="Password" />
-                <Button disabled={loading} type="submit" className="my-2">Sign Up</Button>
+                <Button disabled={loading} type="submit" variant="primary" className="my-2">Sign Up</Button>
             </form>
             <SocialSignIn disabled={loading} />
         </div>

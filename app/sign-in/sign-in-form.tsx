@@ -38,7 +38,7 @@ export default function SignInForm() {
         <form className="flex flex-col gap-4 mb-4" onSubmit={handleSubmit}>
             <Input disabled={loading} label="Email" type="email" name="email" placeholder="Email" className="mb-2 p-2 border rounded" required />
             <Input disabled={loading} label="Password" type="password" name="password" placeholder="Password" className="mb-4 p-2 border rounded" required minLength={8} />
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" variant="primary" disabled={loading}>
                 {loading ? "Signing in..." : "Sign In"}
             </Button>
         </form>

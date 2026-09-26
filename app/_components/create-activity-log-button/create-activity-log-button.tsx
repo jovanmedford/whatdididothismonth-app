@@ -30,7 +30,7 @@ export function CreateActivityLogButton({ year, month, className }: { year: numb
 
 
     return (
-        <ResponsiveShell title="Start a new log" open={open} onOpenChange={setOpen} trigger={<Button variant="primary" className={clsx("flex justify-center", className)}>Track an activity <Scale className="ml-2" /></Button>}>
+        <ResponsiveShell title="Start a new log" open={open} onOpenChange={setOpen} trigger={<Button variant="primary" className={clsx("flex justify-center", className)}>Track an activity <Scale className="size-4.5" /></Button>}>
             <div>
                 <ActivityLogForm onSubmit={(label, target) => handleSubmit(label, target)} />
             </div>

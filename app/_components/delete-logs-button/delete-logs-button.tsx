@@ -40,8 +40,8 @@ export function DeleteLogsButton({ logs }: { logs: string[] }) {
     return (
         <Dialog.Root open={isOpen} onOpenChange={handleOpenChange}>
             <Dialog.Trigger asChild>
-                <Button variant="transparent"  aria-label="Delete Logs">
-                    <Trash className="size-4 hover:text-error" />
+                <Button variant="transparent" size="icon" aria-label="Delete Logs">
+                    <Trash className="size-4.5 hover:text-error" />
                 </Button>
             </Dialog.Trigger>
             <Dialog.Portal>
@@ -51,8 +51,8 @@ export function DeleteLogsButton({ logs }: { logs: string[] }) {
                         <Dialog.Title className="text-lg font-semibold ">Delete Logs</Dialog.Title>
 
                         <Dialog.Close asChild>
-                            <Button aria-label="Close" variant="transparent">
-                                <X />
+                            <Button aria-label="Close" variant="transparent" size="icon">
+                                <X className="size-4.5" />
                             </Button>
                         </Dialog.Close>
                     </div>

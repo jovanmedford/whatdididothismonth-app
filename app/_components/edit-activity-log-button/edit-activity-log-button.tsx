@@ -29,7 +29,7 @@ export function EditActivityLogButton({ log }: { log: ActivityLogDto }) {
 
 
     return (
-        <ResponsiveShell open={open} onOpenChange={setOpen} title={`Edit ${log.activityLabel}`} trigger={<Button variant="transparent" aria-label={`Edit ${log.activityLabel}`}><Pen /></Button>}>
+        <ResponsiveShell open={open} onOpenChange={setOpen} title={`Edit ${log.activityLabel}`} trigger={<Button variant="transparent" size="icon" aria-label={`Edit ${log.activityLabel}`}><Pen className="size-4.5" /></Button>}>
             <div>
                 <ActivityLogForm label={log.activityLabel} target={log.target} onSubmit={(label, target) => handleSubmit(label, target)} />
             </div>
