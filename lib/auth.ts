@@ -27,6 +27,7 @@ export const auth = betterAuth({
         mcp({
             loginPage: "/sign-in",
             consentPage: "/consent",
+            allowPublicClientPrelogin: true,
             resource: mcpResourceUrl,
             resources: [{ identifier: mcpResourceUrl, allowedScopes: ["activity:read"] }],
             scopes: ["openid", "profile", "offline_access", "activity:read"],
