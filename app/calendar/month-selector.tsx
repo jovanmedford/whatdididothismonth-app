@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ChangeEvent } from "react";
+import { cn } from "@/lib/utils";
 
 export default function MonthSelector({ searchMonth }: { searchMonth: number }) {
     const router = useRouter();
@@ -25,7 +26,12 @@ export default function MonthSelector({ searchMonth }: { searchMonth: number }) 
 function MonthSelect({ onChange, value }: { onChange: (event: ChangeEvent<HTMLSelectElement>) => void; value: number }) {
     return (
         <div className="md:hidden w-fit mx-auto mb-2">
-            <select name="month" onChange={onChange} value={value}>
+            <select
+                className="cursor-pointer rounded-md px-2 py-1 transition-colors hover:bg-highlight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-400"
+                name="month"
+                onChange={onChange}
+                value={value}
+            >
 
                 {MONTHS.map((month) => (
                     <option key={month.value} value={month.value}>
@@ -42,8 +48,15 @@ function MonthRadioGroup({ onChange, value }: { onChange: (event: ChangeEvent<HT
     return (
         <div className="hidden md:flex  justify-between w-full py-2 border-t border-b">
             {MONTHS.map((month) => (
-                <label className={`${isChecked(month.value) ? " bg-primary-400 text-white" : ""
-                    } block rounded-3xl px-3 py-1 focus:outline-2 radio-parent`} key={month.value}>
+                <label
+                    className={cn(
+                        "block cursor-pointer rounded-3xl px-3 py-1 transition-colors focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary-400",
+                        isChecked(month.value)
+                            ? "bg-primary-400 text-white hover:bg-primary-400/90"
+                            : "hover:bg-highlight"
+                    )}
+                    key={month.value}
+                >
                     <input className="sr-only" type="radio" name="month" value={month.value} onChange={onChange} checked={isChecked(month.value)} />
                     {month.name.slice(0, 3)}
                 </label>
