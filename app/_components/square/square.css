@@ -1,14 +1,15 @@
-
-
-.boop-animation {
-    animation: boop 500ms alternate ease-in-out;
+.square-boop {
+    animation: square-boop 500ms ease-in-out;
 }
 
-.background-transition {
-    transition: background-color 200ms ease-in-out;
+.square-transition {
+    transition:
+        background-color 200ms ease-in-out,
+        border-color 200ms ease-in-out,
+        color 200ms ease-in-out;
 }
 
-@keyframes boop {
+@keyframes square-boop {
     0% {
         transform: scale(1);
     }
@@ -19,5 +20,15 @@
 
     100% {
         transform: scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .square-boop {
+        animation: none;
+    }
+
+    .square-transition {
+        transition: none;
     }
 }

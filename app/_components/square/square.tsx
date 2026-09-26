@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import "./square.css";
 
 export default function Square({
     className,
     isChecked = false,
     isReached = false,
-    onChange = () => console.log("CLICKED"),
+    onChange,
     disabled = false,
     day
 }: SquareProps) {
@@ -25,11 +25,12 @@ export default function Square({
 
     return (
         <label
-            className={clsx(
-                "background-transition block cursor-pointer focus:outline-2 checkbox-parent size-7",
-                getBackgroundColor(isChecked, isReached),
+            className={cn(
+                "square-transition relative flex size-8 cursor-pointer items-center justify-center overflow-hidden rounded-md border text-sm font-medium tabular-nums",
+                "focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary-400",
+                getStateClasses(isChecked, isReached),
                 className,
-                isBooping && "boop-animation",
+                isBooping && "square-boop",
                 disabled && "cursor-not-allowed opacity-50"
             )}
             onAnimationEnd={() => setIsBooping(false)}
@@ -39,24 +40,24 @@ export default function Square({
                 type="checkbox"
                 checked={isChecked}
                 onChange={onChange}
-                readOnly={!!onChange}
                 disabled={disabled}
+                aria-label={`Day ${day}`}
             />
-            <span className={clsx("flex items-center justify-center h-full text-sm tabular-nums w-8")}>{day}</span>
+            <span aria-hidden="true">{day}</span>
         </label>
     );
 }
 
-function getBackgroundColor(isChecked: boolean, isReached?: boolean) {
+function getStateClasses(isChecked: boolean, isReached: boolean) {
     if (isReached && isChecked) {
-        return "bg-reached text-white hover:bg-reached/80";
+        return "border-reached bg-reached text-white has-[:enabled]:hover:bg-reached/90";
     }
 
     if (isChecked) {
-        return "bg-primary-400 text-white/80 hover:bg-primary-400/80";
+        return "border-primary-400 bg-primary-400 text-white has-[:enabled]:hover:bg-primary-400/90";
     }
 
-    return "bg-muted text-primary-400/80 hover:bg-muted/80";
+    return "border-border bg-muted/70 text-primary-400 has-[:enabled]:hover:border-primary-100 has-[:enabled]:hover:bg-highlight";
 }
 
 interface SquareProps {
@@ -65,5 +66,5 @@ interface SquareProps {
     isChecked?: boolean;
     isReached?: boolean;
     day: number
-    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
