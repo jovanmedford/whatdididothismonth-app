@@ -18,8 +18,9 @@
     "test:migrate": "dotenv -e .env.test -- npm run db:migrate"
   },
   "dependencies": {
+    "@better-auth/oauth-provider": "1.7.6",
     "@prisma/client": "^7.8.0",
-    "better-auth": "^1.6.9",
+    "better-auth": "1.7.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.17.0",
