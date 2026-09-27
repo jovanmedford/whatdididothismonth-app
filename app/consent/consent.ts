@@ -37,9 +37,16 @@ export async function submitConsent(signedQuery: string, formData: FormData) {
 
     let result;
     try {
+        const { baseURL } = await auth.$context;
         result = await auth.api.oauth2Consent({
             body: { accept: decision === "allow", oauth_query: signedQuery },
             headers: requestHeaders,
+            // Consent resumes authorization, which requires HTTP request context.
+            request: new Request(`${baseURL}/oauth2/consent`, {
+                method: "POST",
+                headers: requestHeaders,
+            }),
+            asResponse: false,
         });
     } catch {
         redirect("/consent");
