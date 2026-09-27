@@ -6,10 +6,11 @@ import { jwt } from "better-auth/plugins";
 import { mcp } from "@better-auth/mcp";
 import { cimd } from "@better-auth/cimd";
 import { fetchClientMetadataResource } from "@better-auth/cimd/node";
-import { authBaseUrl, mcpResourceUrl } from "./mcp-config";
+import { authBaseUrl, mcpResourceUrl, previewOrigins } from "./mcp-config";
 
 export const auth = betterAuth({
     baseURL: authBaseUrl,
+    trustedOrigins: previewOrigins,
     database: prismaAdapter(prisma, {
         provider: "postgresql",
     }),
