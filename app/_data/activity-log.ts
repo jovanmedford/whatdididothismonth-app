@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { normalizeLabel, validateLabel, validateMonth, validateTarget, validateYear } from "@/lib/util";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { ACTIVITY_EXISTS_MESSAGE, LOG_ALREADY_EXISTS_MESSAGE } from "@/lib/messages";
+import { getMonthlyActivityLogsForUser } from "@/lib/monthly-activity";
 
 
 export const getActivityLogs = async ({ year, month }: { year: number, month: number }): Promise<Result<ActivityLogDto[]>> => {
@@ -21,33 +22,8 @@ export const getActivityLogs = async ({ year, month }: { year: number, month: nu
     }
 
     try {
-        const logs = await prisma.activityLog.findMany({
-            where: {
-                activity: {
-                    owner: { id: user.id }
-                },
-                month,
-                year,
-            },
-            include: {
-                activity: true,
-                successLogs: true,
-            }, orderBy: {
-                activity: {
-                    label: "asc"
-                }
-            }
-        });
-
-        return success(logs.map(log => ({
-            id: log.id,
-            activityLabel: log.activity.label,
-            month: log.month,
-            year: log.year,
-            target: log.target,
-            successes: log.successLogs.map(successLog => successLog.day)
-        })))
-    } catch (error) {
+        return success(await getMonthlyActivityLogsForUser(user.id, year, month))
+    } catch {
         return internalError("Failed to fetch activity logs")
     }
 }
