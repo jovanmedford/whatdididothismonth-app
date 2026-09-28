@@ -23,5 +23,10 @@ export const POST = requireMcpAuth(
             },
         });
     },
-    { resource: mcpResourceUrl, requiredScopes: ["activity:read"] },
+    {
+        resource: mcpResourceUrl,
+        requiredScopes: ["activity:read"],
+        // Request both permissions during connection; write access is enforced per tool.
+        challengeScopes: ["activity:read", "activity:write"],
+    },
 );
