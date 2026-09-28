@@ -33,8 +33,8 @@ export const auth = betterAuth({
             allowDynamicClientRegistration: process.env.NODE_ENV === "development",
             allowUnauthenticatedClientRegistration: process.env.NODE_ENV === "development",
             resource: mcpResourceUrl,
-            resources: [{ identifier: mcpResourceUrl, allowedScopes: ["activity:read"] }],
-            scopes: ["openid", "profile", "offline_access", "activity:read"],
+            resources: [{ identifier: mcpResourceUrl, allowedScopes: ["activity:read", "activity:write"] }],
+            scopes: ["openid", "profile", "offline_access", "activity:read", "activity:write"],
         }),
         cimd({
             fetchClientMetadataResource,

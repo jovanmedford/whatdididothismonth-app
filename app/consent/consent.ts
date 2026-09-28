@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 
 export const scopeDescriptions: Record<string, string> = {
     "activity:read": "View your activities and monthly progress",
+    "activity:write": "Mark days as completed for your activities",
     openid: "Confirm your identity",
     profile: "See your profile information",
     offline_access: "Stay connected after you close this session",

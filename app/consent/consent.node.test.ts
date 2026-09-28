@@ -30,7 +30,7 @@ afterEach(async () => {
     vi.clearAllMocks();
 });
 
-async function startConsent() {
+async function startConsent(scopes: string[]) {
     const id = randomUUID();
     const signup = await auth.api.signUpEmail({
         body: {
@@ -55,7 +55,7 @@ async function startConsent() {
     await prisma.oauthClient.create({
         data: {
             id: randomUUID(), clientId, name: "Consent test client",
-            scopes: ["activity:read"], contacts: [],
+            scopes, contacts: [],
             redirectUris: [callback], postLogoutRedirectUris: [],
             grantTypes: ["authorization_code"], responseTypes: ["code"],
             tokenEndpointAuthMethod: "none", requirePKCE: true,
@@ -65,7 +65,7 @@ async function startConsent() {
     const verifier = randomUUID() + randomUUID();
     const query = new URLSearchParams({
         client_id: clientId, redirect_uri: callback, response_type: "code",
-        scope: "activity:read", resource: mcpResourceUrl, state: id,
+        scope: scopes.join(" "), resource: mcpResourceUrl, state: id,
         code_challenge: createHash("sha256").update(verifier).digest("base64url"),
         code_challenge_method: "S256",
     });
@@ -81,8 +81,13 @@ async function startConsent() {
 }
 
 describe("OAuth consent server action", () => {
-    it.each(["allow", "deny"])("returns to the client after %s with read-only Next.js headers", async decision => {
-        const { signedQuery, requestHeaders, state, verifier } = await startConsent();
+    it.each([
+        { decision: "allow", scopes: ["activity:read"] },
+        { decision: "deny", scopes: ["activity:read"] },
+        { decision: "allow", scopes: ["activity:read", "activity:write"] },
+        { decision: "deny", scopes: ["activity:read", "activity:write"] },
+    ])("returns to the client after $decision for $scopes with read-only Next.js headers", async ({ decision, scopes }) => {
+        const { signedQuery, requestHeaders, state, verifier } = await startConsent(scopes);
         const form = new FormData();
         form.set("decision", decision);
         const consentCall = vi.spyOn(auth.api, "oauth2Consent");
@@ -112,6 +117,8 @@ describe("OAuth consent server action", () => {
             }),
         }));
         expect(tokenResponse.status).toBe(200);
-        expect((await tokenResponse.json()).access_token).toBeTruthy();
+        const token = await tokenResponse.json();
+        expect(token.access_token).toBeTruthy();
+        expect(token.scope.split(" ")).toEqual(expect.arrayContaining(scopes));
     });
 });

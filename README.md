@@ -16,3 +16,10 @@ WDIDTM focuses on long term commitment over daily streaks. Streaks are great for
 On the other hand, it is incredible how quietly months can pass by without noticing you haven't made progress towards your goals.
 
 The hope is by maintaining a snapshot of where you are each month, you can recommit to your long term vision.
+
+# MCP tools
+
+Connect to `/api/mcp` using OAuth.
+
+- `get_month_activity`: View monthly goals and completed days. Requires `activity:read`.
+- `add_success_log`: Mark a day as completed using an `activityLogId` and `day`. Requires `activity:read` and `activity:write`.
